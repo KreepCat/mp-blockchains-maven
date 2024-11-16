@@ -12,7 +12,7 @@ public interface HashValidator {
    * @param hash
    *   The hash we're checking.
    *
-   * @return true if the hash is valid and false otehrwise.
+   * @return true if the hash is valid and false otherwise.
    */
   boolean isValid(Hash hash);
 

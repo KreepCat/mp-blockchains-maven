@@ -1,5 +1,9 @@
 package edu.grinnell.csc207.blockchains;
 
+import java.lang.reflect.Array;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Blocks to be stored in blockchains.
  *
@@ -10,42 +14,53 @@ class Block {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
+  int num;
+  Transaction transaction;
+  Hash prevHash;
+  long nonce;
+  Hash currHash;
+  MessageDigest md;
+
 
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
 
   /**
-   * Create a new block from the specified block number, transaction, and
-   * previous hash, mining to choose a nonce that meets the requirements
-   * of the validator.
+   * Create a new block from the specified block number, transaction, and previous hash, mining to
+   * choose a nonce that meets the requirements of the validator.
    *
-   * @param num
-   *   The number of the block.
-   * @param transaction
-   *   The transaction for the block.
-   * @param prevHash
-   *   The hash of the previous block.
-   * @param check
-   *   The validator used to check the block.
+   * @param num The number of the block.
+   * @param transaction The transaction for the block.
+   * @param prevHash The hash of the previous block.
+   * @param check The validator used to check the block.
+   * @throws NoSuchAlgorithmException
    */
-  Block(int num, Transaction transaction, Hash prevHash, HashValidator check) {
+  Block(int num, Transaction transaction, Hash prevHash, HashValidator check)
+      throws NoSuchAlgorithmException {
+    this.num = num;
+    this.transaction = transaction;
+    this.prevHash = prevHash;
+    md = MessageDigest.getInstance("sha-256");
     // STUB
   } // Block(int, Transaction, Hash, HashValidator)
 
   /**
    * Create a new block, computing the hash for the block.
    *
-   * @param num
-   *   The number of the block.
-   * @param transaction
-   *   The transaction for the block.
-   * @param prevHash
-   *   The hash of the previous block.
-   * @param nonce
-   *   The nonce of the block.
+   * @param num The number of the block.
+   * @param transaction The transaction for the block.
+   * @param prevHash The hash of the previous block.
+   * @param nonce The nonce of the block.
+   * @throws NoSuchAlgorithmException
    */
-  Block(int num, Transaction transaction, Hash prevHash, long nonce) {
+  Block(int num, Transaction transaction, Hash prevHash, long nonce)
+      throws NoSuchAlgorithmException {
+    this.num = num;
+    this.transaction = transaction;
+    this.prevHash = prevHash;
+    this.nonce = nonce;
+    md = MessageDigest.getInstance("sha-256");
     // STUB
   } // Block(int, Transaction, Hash, long)
 
@@ -54,10 +69,16 @@ class Block {
   // +---------+
 
   /**
-   * Compute the hash of the block given all the other info already
-   * stored in the block.
+   * Compute the hash of the block given all the other info already stored in the block.
+   * 
+   * @throws NoSuchAlgorithmException
    */
-  void computeHash() {
+  void computeHash() throws NoSuchAlgorithmException {
+    md.update(this.transaction.toString().getBytes());
+    md.update((byte) this.num);
+    md.update(this.prevHash.getBytes());
+    md.update((byte) this.nonce);
+    this.currHash = new Hash(md.digest());
     // STUB
   } // computeHash()
 
@@ -71,7 +92,7 @@ class Block {
    * @return the number of the block.
    */
   int getNum() {
-    return 0;   // STUB
+    return this.num;
   } // getNum()
 
   /**
@@ -80,7 +101,7 @@ class Block {
    * @return the transaction.
    */
   Transaction getTransaction() {
-    return new Transaction("Here", "There", 0); // STUB
+    return this.transaction;
   } // getTransaction()
 
   /**
@@ -89,7 +110,7 @@ class Block {
    * @return the nonce.
    */
   long getNonce() {
-    return 0;   // STUB
+    return this.nonce;
   } // getNonce()
 
   /**
@@ -98,7 +119,7 @@ class Block {
    * @return the hash of the previous block.
    */
   Hash getPrevHash() {
-    return new Hash(new byte[] {0});  // STUB
+    return this.prevHash;
   } // getPrevHash
 
   /**
@@ -107,7 +128,7 @@ class Block {
    * @return the hash of the current block.
    */
   Hash getHash() {
-    return new Hash(new byte[] {0});  // STUB
+    return this.currHash;
   } // getHash
 
   /**
@@ -116,6 +137,7 @@ class Block {
    * @return a string representation of the block.
    */
   public String toString() {
-    return "";  // STUB
+    return "Block " + num + "(Transaction: " + this.transaction.toString() + ", Nonce: "
+        + this.nonce + ", prevHash: " + this.prevHash + ", hash: " + this.currHash.toString() + ")";
   } // toString()
 } // class Block
