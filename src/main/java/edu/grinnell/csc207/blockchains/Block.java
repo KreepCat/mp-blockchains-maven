@@ -20,6 +20,7 @@ class Block {
   long nonce;
   Hash currHash;
   MessageDigest md;
+  HashValidator simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
 
 
   // +--------------+------------------------------------------------

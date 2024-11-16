@@ -1,5 +1,7 @@
 package edu.grinnell.csc207.blockchains;
 
+import java.util.Random;
+
 /**
  * A full blockchain.
  *
@@ -9,6 +11,11 @@ public class BlockChain {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
+  BlockNode first;
+  BlockNode last;
+  int length;
+  HashValidator simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
+
 
   // +--------------+------------------------------------------------
   // | Constructors |
@@ -21,7 +28,9 @@ public class BlockChain {
    *   The validator used to check elements.
    */
   public BlockChain(HashValidator check) {
-    // STUB
+    this.length = 0;
+    this.first = new BlockNode(null, null, mine(new Transaction(null, null, 0)));
+    this.last = this.first;
   } // BlockChain(HashValidator)
 
   // +---------+-----------------------------------------------------
@@ -42,7 +51,13 @@ public class BlockChain {
    * @return a new block with correct number, hashes, and such.
    */
   public Block mine(Transaction t) {
-    return new Block(10, t, new Hash(new byte[] {7}), 11);       // STUB
+    Hash hash;
+    long nonce;
+    Random random = new Random();
+    do {
+      nonce = random.nextLong();
+      hash = Block.computeHash(this.length, t, this.last, nonce);
+    } while (! simpleValidator.isValid(hash));
   } // mine(Transaction)
 
   /**
