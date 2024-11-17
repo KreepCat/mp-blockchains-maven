@@ -92,4 +92,41 @@ public class Transaction {
         this.amount);
   } // toString()
 
+  /**
+   * Get a hash code.
+   *
+   * @return the hash code.
+   */
+  public int hashCode() {
+    return this.toString().hashCode();
+  } // hashCode()
+
+  /**
+   * Determine if this Transaction equals another object.
+   *
+   * @param other
+   *   The object to compare to.
+   *
+   * @return true if the other object is a Transaction with the
+   *   same fields.
+   */
+  public boolean equals(Object other) {
+    return (other instanceof Transaction)
+        && this.equals((Transaction) other);
+  } // equals(Object)
+
+  /**
+   * Determine if this Transaction equals another Transaction.
+   *
+   * @param other
+   *   The transaction to compare to.
+   *
+   * @return true if the other object has the same source, target,
+   *   and value.
+   */
+  public boolean equals(Transaction other) {
+    return other.source.equals(this.source)
+        && other.target.equals(this.target)
+        && other.amount == this.amount;
+  } // equals(Transaction)
 } // class Transaction

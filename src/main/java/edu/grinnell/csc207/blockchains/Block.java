@@ -42,8 +42,9 @@ class Block {
     this.num = num;
     this.transaction = transaction;
     this.prevHash = prevHash;
+    this.nonce = BlockChain.mine(transaction);
     md = MessageDigest.getInstance("sha-256");
-    // STUB
+    // STUB (what does it mean "mining to choose a nonce"?)
   } // Block(int, Transaction, Hash, HashValidator)
 
   /**
@@ -62,6 +63,7 @@ class Block {
     this.prevHash = prevHash;
     this.nonce = nonce;
     md = MessageDigest.getInstance("sha-256");
+    computeHash();
     // STUB
   } // Block(int, Transaction, Hash, long)
 
