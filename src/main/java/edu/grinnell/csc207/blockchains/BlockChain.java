@@ -46,13 +46,8 @@ public class BlockChain {
   /**
    * Create a new blockchain using a validator to check elements.
    *
-<<<<<<< HEAD
-   * @param check The validator used to check elements.
-   * @throws NoSuchAlgorithmException
-=======
    * @param check The validator used to check elements. <<<<<<< HEAD =======
    * @throws NoSuchAlgorithmException >>>>>>> fdc52bd084e04fdfb4f8cae2172e427c2a009438
->>>>>>> alex
    */
   public BlockChain(HashValidator check) throws NoSuchAlgorithmException {
     // STUB: Should the length initially be 1 or 0 (Does the first count?)
