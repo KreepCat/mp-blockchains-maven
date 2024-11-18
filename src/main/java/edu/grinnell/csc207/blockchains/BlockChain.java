@@ -13,7 +13,7 @@ import edu.grinnell.csc207.util.NullKeyException;
  * @author Alex Pollock
  * @author Kevin Tang
  */
-public class BlockChain {
+public class BlockChain  {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
@@ -137,7 +137,12 @@ public class BlockChain {
   /**
    * Add a block to the end of the chain.
    *
-   * @param blk The block to add to the end of the chain.
+   * @param blk
+   *   The block to add to the end of the chain.
+   *
+   * @throws IllegalArgumentException if (a) the hash is not valid, (b)
+   *   the hash is not appropriate for the contents, or (c) the previous
+   *   hash is incorrect.
    */
   public void append(Block blk) {
     BlockNode dummy = new BlockNode(this.last, null, blk);

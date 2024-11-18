@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Your Name Here
  * @author Samuel A. Rebelsky
  */
-class Block {
+public class Block {
 
   /**
    * The byte buffer used for ints.
@@ -163,7 +163,7 @@ class Block {
    *
    * @return the number of the block.
    */
-  int getNum() {
+  public int getNum() {
     return this.num;
   } // getNum()
 
@@ -172,7 +172,7 @@ class Block {
    *
    * @return the transaction.
    */
-  Transaction getTransaction() {
+  public Transaction getTransaction() {
     return this.transaction;
   } // getTransaction()
 
@@ -181,7 +181,7 @@ class Block {
    *
    * @return the nonce.
    */
-  long getNonce() {
+  public long getNonce() {
     return this.nonce;
   } // getNonce()
 
@@ -190,7 +190,7 @@ class Block {
    *
    * @return the hash of the previous block.
    */
-  Hash getPrevHash() {
+  public Hash getPrevHash() {
     return this.prevHash;
   } // getPrevHash
 
