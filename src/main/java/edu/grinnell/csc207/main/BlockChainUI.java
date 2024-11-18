@@ -1,5 +1,8 @@
 package edu.grinnell.csc207.main;
 
+import edu.grinnell.csc207.blockchains.BlockChain;
+import edu.grinnell.csc207.blockchains.HashValidator;
+
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,6 +14,14 @@ import java.io.InputStreamReader;
  * @author Samuel A. Rebelsky
  */
 public class BlockChainUI {
+  // +-----------+---------------------------------------------------
+  // | Constants |
+  // +-----------+
+
+  // The number of bytes we validate. Should be set to 3 before
+  // submitting.
+  static final int VALIDATOR_BYTES = 0;
+
   // +---------+-----------------------------------------------------
   // | Helpers |
   // +---------+
@@ -49,6 +60,21 @@ public class BlockChainUI {
   public static void main(String[] args) throws Exception {
     PrintWriter pen = new PrintWriter(System.out, true);
     BufferedReader eyes = new BufferedReader(new InputStreamReader(System.in));
+
+    // Set up our blockchain.
+    HashValidator validator = 
+      (h) -> {
+        if (h.length() < VALIDATOR_BYTES) {
+          return false;
+        } // if
+        for (int v = 0; v < VALIDATOR_BYTES; v++) {
+          if (h.get(v) != 0) {
+            return false;
+          } // if
+        } // for
+        return true;
+      };
+    BlockChain chain = new BlockChain(validator);
 
     instructions(pen);
 

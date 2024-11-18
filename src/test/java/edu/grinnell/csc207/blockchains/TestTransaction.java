@@ -20,7 +20,7 @@ public class TestTransaction {
     assertEquals("Here", trans.getSource(), "Source of basic transaction");
     assertEquals("There", trans.getTarget(), "Target of basic transaction");
     assertEquals(10, trans.getAmount(), "Amount of basic transaction");
-    assertEquals("[Source: Here, Target: There, Amount: 10",
+    assertEquals("[Source: Here, Target: There, Amount: 10]",
         trans.toString(),
         "String representation of basic transaction");
   } // basicTest
@@ -34,7 +34,7 @@ public class TestTransaction {
     assertEquals("", trans.getSource(), "Source of deposit");
     assertEquals("There", trans.getTarget(), "Target of deposit");
     assertEquals(42, trans.getAmount(), "Amount of depoist");
-    assertEquals("[Deposit, Target: There, Amount: 42",
+    assertEquals("[Deposit, Target: There, Amount: 42]",
         trans.toString(),
         "String representation of deposit");
   } // depositTest()
