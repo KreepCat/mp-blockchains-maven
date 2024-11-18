@@ -1,5 +1,11 @@
 package edu.grinnell.csc207.blockchains;
 
+/**
+ * Wrap the Block in a node.
+ *
+ * @author Alex Pollock
+ * @author Kevin Tang
+ */
 public class BlockNode {
   // +--------+------------------------------------------------------
   // | Fields |
@@ -11,33 +17,64 @@ public class BlockNode {
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
+
+  /**
+   * The basic constructor for the node version of block.
+   * @param prev the previous node
+   * @param next the next node
+   * @param info the block
+   */
   public BlockNode(BlockNode prev, BlockNode next, Block info) {
     this.prevNode = prev;
     this.nextNode = next;
     this.info = info;
   } // BlockNode()
 
+  /**
+   * Get the block.
+   * @return the block
+   */
   public Block getBlock() {
     return this.info;
-  }
+  } // getBlock()
 
-  public void setBlock(Block newInfo) {
-    this.info = newInfo;
-  }
-
-  public void setNext(BlockNode next) {
-    this.nextNode = next;
-  }
-
-  public void setPrev(BlockNode prev) {
-    this.prevNode = prev;
-  }
-
+  /**
+   * Get the next node.
+   * @return the next node
+   */
   public BlockNode getNext() {
     return this.nextNode;
-  }
+  } // getNext()
 
+  /**
+   * Get the previous node.
+   * @return the previous node
+   */
   public BlockNode getPrev() {
     return this.prevNode;
-  }
+  } // getPrev()
+
+  /**
+   * Set the block.
+   * @param newInfo the block
+   */
+  public void setBlock(Block newInfo) {
+    this.info = newInfo;
+  } // setBlock(Block)
+
+  /**
+   * Set the next node.
+   * @param newInfo the next node
+   */
+  public void setNext(BlockNode next) {
+    this.nextNode = next;
+  } // setNext()
+
+  /**
+   * Set the previous node.
+   * @param newInfo the previous node
+   */
+  public void setPrev(BlockNode prev) {
+    this.prevNode = prev;
+  } // setPrev()
 }

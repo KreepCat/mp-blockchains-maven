@@ -10,7 +10,8 @@ import edu.grinnell.csc207.util.NullKeyException;
 /**
  * A full blockchain.
  *
- * @author Your Name Here
+ * @author Alex Pollock
+ * @author Kevin Tang
  */
 public class BlockChain {
   // +--------+------------------------------------------------------
@@ -45,11 +46,16 @@ public class BlockChain {
   /**
    * Create a new blockchain using a validator to check elements.
    *
+<<<<<<< HEAD
    * @param check The validator used to check elements.
    * @throws NoSuchAlgorithmException
+=======
+   * @param check The validator used to check elements. <<<<<<< HEAD =======
+   * @throws NoSuchAlgorithmException >>>>>>> fdc52bd084e04fdfb4f8cae2172e427c2a009438
+>>>>>>> alex
    */
   public BlockChain(HashValidator check) throws NoSuchAlgorithmException {
-    //STUB: Should the length initially be 1 or 0 (Does the first count?)
+    // STUB: Should the length initially be 1 or 0 (Does the first count?)
     this.length = 0;
     this.first = new BlockNode(null, null,
         new Block(0, new Transaction("", "", 0), new Hash(new byte[] {}), simpleValidator));
@@ -74,7 +80,7 @@ public class BlockChain {
       balance.set(from, balance.get(from) + amt);
     } else {
       deposit(blk, mode);
-    } // if
+    } // if/else
     BlockNode newNode = new BlockNode(this.last, null, blk);
     this.last.setNext(newNode);
   } // transaction()
@@ -94,7 +100,7 @@ public class BlockChain {
       balance.set(to, balance.get(to) - amt);
     } else {
       balance.set(to, amt);
-    } // if
+    } // if/else
   } // deposit()
 
   // +---------+-----------------------------------------------------
@@ -160,7 +166,7 @@ public class BlockChain {
       this.last = this.last.getPrev();
       this.last.setNext(null);
       return true;
-    } // if
+    } // if/else
   } // removeLast()
 
   /**

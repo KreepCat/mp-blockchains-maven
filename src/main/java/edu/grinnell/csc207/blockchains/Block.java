@@ -1,9 +1,8 @@
 package edu.grinnell.csc207.blockchains;
 
-import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 /**
  * Blocks to be stored in blockchains.
@@ -12,16 +11,55 @@ import java.util.Random;
  * @author Samuel A. Rebelsky
  */
 class Block {
+
+  /**
+   * The byte buffer used for ints.
+   */
+  static ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
+
+  /**
+   * The byte buffer used for longs.
+   */
+  static ByteBuffer longBuffer = ByteBuffer.allocate(Long.BYTES);
+
+
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
+  /**
+   * The position of the block in the chain.
+   */
   int num;
+
+  /**
+   * The transaction on the block.
+   */
   Transaction transaction;
+
+  /**
+   * The previous hash.
+   */
   Hash prevHash;
+
+  /**
+   * The nonce.
+   */
   long nonce;
+
+  /**
+   * The hash on this block.
+   */
   Hash currHash;
+
+  /**
+   * The message digest used to generate the hash.
+   */
   MessageDigest md;
-  HashValidator simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
+
+  /**
+   * The validator.
+   */
+  HashValidator simpleValidator;
 
 
   // +--------------+------------------------------------------------
@@ -32,36 +70,40 @@ class Block {
    * Create a new block from the specified block number, transaction, and previous hash, mining to
    * choose a nonce that meets the requirements of the validator.
    *
-   * @param num The number of the block.
-   * @param transaction The transaction for the block.
-   * @param prevHash The hash of the previous block.
+   * @param number The number of the block.
+   * @param transact The transaction for the block.
+   * @param preveiousHash The hash of the previous block.
    * @param check The validator used to check the block.
    */
-  Block(int num, Transaction transaction, Hash prevHash, HashValidator check) {
-    this.num = num;
-    this.transaction = transaction;
-    this.prevHash = prevHash;
-    // STUB
+  Block(int number, Transaction transact, Hash preveiousHash, HashValidator check) {
+    this.num = number;
+    this.transaction = transact;
+    this.prevHash = preveiousHash;
+    this.simpleValidator = check;
+    try {
+      computeHash();
+    } catch (NoSuchAlgorithmException e) {
+    } // try/catch
   } // Block(int, Transaction, Hash, HashValidator)
 
   /**
    * Create a new block, computing the hash for the block.
    *
-   * @param num The number of the block.
-   * @param transaction The transaction for the block.
-   * @param prevHash The hash of the previous block.
-   * @param nonce The nonce of the block.
+   * @param number The number of the block.
+   * @param transact The transaction for the block.
+   * @param previousHash The hash of the previous block.
+   * @param inputNonce The nonce of the block.
    */
-  Block(int num, Transaction transaction, Hash prevHash, long nonce) {
-    this.num = num;
-    this.transaction = transaction;
-    this.prevHash = prevHash;
-    this.nonce = nonce;
+  Block(int number, Transaction transact, Hash previousHash, long inputNonce) {
+    this.num = number;
+    this.transaction = transact;
+    this.prevHash = previousHash;
+    this.nonce = inputNonce;
+    this.simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
     try {
       this.computeHash();
     } catch (NoSuchAlgorithmException e) {
-    }
-    // STUB
+    } // try/catch
   } // Block(int, Transaction, Hash, long)
 
   // +---------+-----------------------------------------------------
@@ -69,18 +111,47 @@ class Block {
   // +---------+
 
   /**
+   * Convert an integer into its bytes.
+   *
+   * @param i
+   *   The integer to convert.
+   *
+   * @return
+   *   The bytes of that integer.
+   */
+  static byte[] intToBytes(int i) {
+    intBuffer.clear();
+    return intBuffer.putInt(i).array();
+  } // intToBytes(int)
+
+  /**
+   * Convert a long into its bytes.
+   *
+   * @param l
+   *   The long to convert.
+   *
+   * @return
+   *   The bytes in that long.
+   */
+  static byte[] longToBytes(long l) {
+    longBuffer.clear();
+    return longBuffer.putLong(l).array();
+  } // longToBytes()
+
+  /**
    * Compute the hash of the block given all the other info already stored in the block.
-   * 
+   *
    * @throws NoSuchAlgorithmException
    */
   void computeHash() throws NoSuchAlgorithmException {
     md = MessageDigest.getInstance("sha-256");
-    md.update(this.transaction.toString().getBytes());
-    md.update((byte) this.num);
-    md.update(this.prevHash.getBytes());
-    md.update((byte) this.nonce);
+    md.update(intToBytes(this.getNum()));
+    md.update(this.getTransaction().getSource().getBytes());
+    md.update(this.getTransaction().getTarget().getBytes());
+    md.update(intToBytes(this.getTransaction().getAmount()));
+    md.update(this.getPrevHash().getBytes());
+    md.update(longToBytes(this.getNonce()));
     this.currHash = new Hash(md.digest());
-    // STUB
   } // computeHash()
 
   // +---------+-----------------------------------------------------
