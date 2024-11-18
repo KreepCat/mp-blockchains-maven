@@ -31,6 +31,10 @@ public class BlockChain {
    * Create a new blockchain using a validator to check elements.
    *
    * @param check The validator used to check elements.
+<<<<<<< HEAD
+=======
+   * @throws NoSuchAlgorithmException
+>>>>>>> fdc52bd084e04fdfb4f8cae2172e427c2a009438
    */
   public BlockChain(HashValidator check) throws NoSuchAlgorithmException {
     //STUB: Should the length initially be 1 or 0 (Does the first count?)
@@ -122,10 +126,18 @@ public class BlockChain {
    *
    * @return false if the chain has only one block (in which case it's not removed) or true
    *         otherwise (in which case the last block is removed).
-   */
-  public boolean removeLast() {
-    
-    return true; // STUB
+      * @throws KeyNotFoundException 
+      * @throws NullKeyException 
+      */
+     public boolean removeLast() throws NullKeyException, KeyNotFoundException {
+    if (this.length <= 1) {
+      return false;
+    } else {
+      transaction(this.last.getBlock(), 0);
+      this.last = this.last.getPrev();
+      this.last.setNext(null);
+      return true;
+    }
   } // removeLast()
 
   /**
