@@ -20,7 +20,7 @@ public class BlockChain {
   /**
    * First Node.
    */
-  static BlockNode first;
+  BlockNode first;
   /**
    * Last Node.
    */
@@ -28,7 +28,7 @@ public class BlockChain {
   /**
    * Length of chain.
    */
-  static int length;
+  int length;
   /**
    * Hash validator.
    */
@@ -214,8 +214,12 @@ public class BlockChain {
     return true;
   } // isCorrect()
 
-
-  static Iterator<String> users() {
+  /**
+   * Return an iterator of all the people who participated in the system.
+   *
+   * @return an iterator of all the people in the system.
+   */
+  public Iterator<String> users() {
     Iterator<String> it = new Iterator<String>() {
 
       private int index = 0;
@@ -231,10 +235,16 @@ public class BlockChain {
     return it;
   } // users
 
-  static Iterator<Block> blocks() {
+  /**
+   * Get an interator for all the blocks in the chain.
+   *
+   * @return an iterator for all the blocks in the chain.
+   */
+  public Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
 
       private int index = 0;
+
 
       public boolean hasNext() {
         return index < length;
@@ -249,7 +259,12 @@ public class BlockChain {
     return it;
   } // blocks
 
-  static Iterator<Transaction> entries() {
+  /**
+   * Get an interator for all the transactions in the chain.
+   *
+   * @return an iterator for all the blocks in the chain.
+   */
+  public Iterator<Transaction> entries() {
     Iterator<Transaction> it = new Iterator<Transaction>() {
 
       private int index = 0;
@@ -262,7 +277,7 @@ public class BlockChain {
         index++;
         first = first.getNext();
         return first.getBlock().getTransaction();
-      } // Next
+      } // next()
     };
     return it;
   } // entries
