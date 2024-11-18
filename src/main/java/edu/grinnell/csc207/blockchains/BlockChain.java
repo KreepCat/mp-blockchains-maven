@@ -10,7 +10,7 @@ import edu.grinnell.csc207.util.NullKeyException;
 /**
  * A full blockchain.
  *
- * @author Your Name Here
+ * @author Alexander Pollock and Kevin Tang
  */
 public class BlockChain {
   // +--------+------------------------------------------------------
