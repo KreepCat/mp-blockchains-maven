@@ -95,9 +95,9 @@ public class Hash {
    * @return true if the two hashes are structurally equivalent and false otherwise.
    */
   public boolean equals(Hash other) {
-    if (other.length()==this.length()){
-      for (int i = 0; i<this.length(); i++){
-        if (other.get(i)!=this.get(i)){
+    if (other.length() == this.length()) {
+      for (int i = 0; i < this.length(); i++) {
+        if (other.get(i) != this.get(i)) {
           return false;
         } // if
       } // for
