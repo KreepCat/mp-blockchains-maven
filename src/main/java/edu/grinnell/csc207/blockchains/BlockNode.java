@@ -4,9 +4,9 @@ public class BlockNode {
     // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
-  BlockNode prevNode;
-  BlockNode nextNode;
-  Block info;
+  private BlockNode prevNode;
+  private BlockNode nextNode;
+  private Block info;
 
   // +--------------+------------------------------------------------
   // | Constructors |
