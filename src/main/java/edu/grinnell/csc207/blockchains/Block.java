@@ -35,14 +35,11 @@ class Block {
    * @param transaction The transaction for the block.
    * @param prevHash The hash of the previous block.
    * @param check The validator used to check the block.
-   * @throws NoSuchAlgorithmException
    */
-  Block(int num, Transaction transaction, Hash prevHash, HashValidator check)
-      throws NoSuchAlgorithmException {
+  Block(int num, Transaction transaction, Hash prevHash, HashValidator check) {
     this.num = num;
     this.transaction = transaction;
     this.prevHash = prevHash;
-    md = MessageDigest.getInstance("sha-256");
     // STUB
   } // Block(int, Transaction, Hash, HashValidator)
 
@@ -53,15 +50,13 @@ class Block {
    * @param transaction The transaction for the block.
    * @param prevHash The hash of the previous block.
    * @param nonce The nonce of the block.
-   * @throws NoSuchAlgorithmException
    */
-  Block(int num, Transaction transaction, Hash prevHash, long nonce)
-      throws NoSuchAlgorithmException {
+  Block(int num, Transaction transaction, Hash prevHash, long nonce) {
     this.num = num;
     this.transaction = transaction;
     this.prevHash = prevHash;
     this.nonce = nonce;
-    md = MessageDigest.getInstance("sha-256");
+    
     // STUB
   } // Block(int, Transaction, Hash, long)
 
@@ -75,6 +70,7 @@ class Block {
    * @throws NoSuchAlgorithmException
    */
   void computeHash() throws NoSuchAlgorithmException {
+    md = MessageDigest.getInstance("sha-256");
     md.update(this.transaction.toString().getBytes());
     md.update((byte) this.num);
     md.update(this.prevHash.getBytes());

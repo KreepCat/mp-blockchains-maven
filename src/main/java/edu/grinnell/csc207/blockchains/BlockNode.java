@@ -1,7 +1,7 @@
 package edu.grinnell.csc207.blockchains;
 
 public class BlockNode {
-    // +--------+------------------------------------------------------
+  // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
   private BlockNode prevNode;
@@ -11,30 +11,33 @@ public class BlockNode {
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
-  public BlockNode(BlockNode prev, BlockNode next, Block info){
+  public BlockNode(BlockNode prev, BlockNode next, Block info) {
     this.prevNode = prev;
     this.nextNode = next;
     this.info = info;
   } // BlockNode()
 
-  public Block getBlock(){
+  public Block getBlock() {
     return this.info;
   }
-  public void setBlock(Block newInfo){
+
+  public void setBlock(Block newInfo) {
     this.info = newInfo;
   }
 
-  public void setNext(BlockNode next){
+  public void setNext(BlockNode next) {
     this.nextNode = next;
   }
 
-  public void setPrev(BlockNode prev){
+  public void setPrev(BlockNode prev) {
     this.prevNode = prev;
   }
-  public BlockNode getNext(BlockNode next){
+
+  public BlockNode getNext(BlockNode next) {
     return this.nextNode;
   }
-  public BlockNode getPrev(){
+
+  public BlockNode getPrev() {
     return this.prevNode;
   }
 }

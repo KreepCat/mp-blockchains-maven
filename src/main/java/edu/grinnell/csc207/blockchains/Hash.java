@@ -89,7 +89,7 @@ public class Hash {
   } // equals(Object)
 
   /**
-   * Determine if another Hash is equal to this hash
+   * Determine if another Hash is equal to this hash.
    *
    * @param other The Hash to compare to this Hash.
    *
