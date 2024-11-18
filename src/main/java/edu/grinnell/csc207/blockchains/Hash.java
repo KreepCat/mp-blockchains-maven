@@ -27,7 +27,7 @@ public class Hash {
    * @param data The data to copy into the hash.
    */
   public Hash(byte[] data) {
-    this.bytes = data;
+    this.bytes = data.clone();
   } // Hash(byte[])
 
   // +---------+-----------------------------------------------------
@@ -69,10 +69,9 @@ public class Hash {
    * @return the hash as a hex string.
    */
   public String toString() {
-    String tmp = new String();
     StringBuilder toReturn = new StringBuilder();
     for (int i = 0; i < bytes.length; i++) {
-      toReturn.append(String.format(tmp, Byte.toUnsignedInt(bytes[i])));
+      toReturn.append(String.format("%02X", Byte.toUnsignedInt(bytes[i])));
     } // for
     return toReturn.toString();
   } // toString()
@@ -96,7 +95,16 @@ public class Hash {
    * @return true if the two hashes are structurally equivalent and false otherwise.
    */
   public boolean equals(Hash other) {
-    return (other.bytes.equals(this.bytes));
+    if (other.length()==this.length()){
+      for (int i = 0; i<this.length(); i++){
+        if (other.get(i)!=this.get(i)){
+          return false;
+        } // if
+      } // for
+    } else {
+      return false;
+    } // if/else
+    return true;
   } // eqv(Hash)
 
   /**
