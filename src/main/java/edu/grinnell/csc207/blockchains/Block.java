@@ -3,6 +3,7 @@ package edu.grinnell.csc207.blockchains;
 import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * Blocks to be stored in blockchains.
@@ -56,7 +57,10 @@ class Block {
     this.transaction = transaction;
     this.prevHash = prevHash;
     this.nonce = nonce;
-    
+    try {
+      this.computeHash();
+    } catch (NoSuchAlgorithmException e) {
+    }
     // STUB
   } // Block(int, Transaction, Hash, long)
 
@@ -124,7 +128,7 @@ class Block {
    *
    * @return the hash of the current block.
    */
-  Hash getHash() {
+  public Hash getHash() {
     return this.currHash;
   } // getHash
 

@@ -96,7 +96,18 @@ public class Hash {
    * @return true if the two hashes are structurally equivalent and false otherwise.
    */
   public boolean equals(Hash other) {
-    return (other.bytes.equals(this.bytes));
+    boolean flag = true;
+    if (this.bytes.length == other.getBytes().length){
+      for (int i = 0; i< bytes.length; i++){
+        flag = this.bytes[i] == other.bytes[i];
+        if (flag == false){
+          return flag;
+        }
+      }
+    }else {
+      return false;
+    }
+    return flag;
   } // eqv(Hash)
 
   /**
