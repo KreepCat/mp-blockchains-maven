@@ -16,11 +16,26 @@ public class BlockChain {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
-  BlockNode first;
+  /**
+   * First Node.
+   */
+  static BlockNode first;
+  /**
+   * Last Node.
+   */
   BlockNode last;
-  int length;
+  /**
+   * Length of chain.
+   */
+  static int length;
+  /**
+   * Hash validator.
+   */
   HashValidator simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
-  AssociativeArray<String, Integer> balance = new AssociativeArray<>();
+  /**
+   * Associative array to store balance.
+   */
+  static AssociativeArray<String, Integer> balance = new AssociativeArray<>();
 
 
   // +--------------+------------------------------------------------
@@ -36,14 +51,20 @@ public class BlockChain {
   public BlockChain(HashValidator check) throws NoSuchAlgorithmException {
     //STUB: Should the length initially be 1 or 0 (Does the first count?)
     this.length = 0;
-    this.first = new BlockNode(null, null, new Block(0, new Transaction("", "", 0), new Hash(new byte[] {}), simpleValidator);)
+    this.first = new BlockNode(null, null,
+        new Block(0, new Transaction("", "", 0), new Hash(new byte[] {}), simpleValidator));
     this.last = this.first;
   } // BlockChain(HashValidator)
 
   // +---------+-----------------------------------------------------
   // | Helpers |
   // +---------+
-  //mode = 1 if append a block (add new transaction), mode = 0 if remove a block (step back for a transaction)
+  /**
+   * @param blk input block.
+   * @param mode mode = 1 if append a block (add new transaction), mode = 0 if remove a block
+   * @throws NullKeyException NullKeyException
+   * @throws KeyNotFoundException KeyNotFoundException
+   */
   public void transaction(Block blk, int mode) throws NullKeyException, KeyNotFoundException {
     String from = blk.transaction.getSource();
     int amt = blk.transaction.getAmount();
@@ -53,12 +74,17 @@ public class BlockChain {
       balance.set(from, balance.get(from) + amt);
     } else {
       deposit(blk, mode);
-    }
+    } // if
     BlockNode newNode = new BlockNode(this.last, null, blk);
     this.last.setNext(newNode);
   } // transaction()
 
-
+  /**
+   * @param blk input block.
+   * @param mode mode = 1 if append a block (add new transaction), mode = 0 if remove a block
+   * @throws NullKeyException NullKeyException
+   * @throws KeyNotFoundException KeyNotFoundException
+   */
   public void deposit(Block blk, int mode) throws NullKeyException, KeyNotFoundException {
     String to = blk.transaction.getTarget();
     int amt = blk.transaction.getAmount();
@@ -66,9 +92,9 @@ public class BlockChain {
       balance.set(to, balance.get(to) + amt);
     } else if (balance.hasKey(to) && mode == 0) {
       balance.set(to, balance.get(to) - amt);
-    }else {
+    } else {
       balance.set(to, amt);
-    }
+    } // if
   } // deposit()
 
   // +---------+-----------------------------------------------------
@@ -123,10 +149,10 @@ public class BlockChain {
    *
    * @return false if the chain has only one block (in which case it's not removed) or true
    *         otherwise (in which case the last block is removed).
-      * @throws KeyNotFoundException 
-      * @throws NullKeyException 
-      */
-     public boolean removeLast() throws NullKeyException, KeyNotFoundException {
+   * @throws KeyNotFoundException
+   * @throws NullKeyException
+   */
+  public boolean removeLast() throws NullKeyException, KeyNotFoundException {
     if (this.length <= 1) {
       return false;
     } else {
@@ -134,7 +160,7 @@ public class BlockChain {
       this.last = this.last.getPrev();
       this.last.setNext(null);
       return true;
-    }
+    } // if
   } // removeLast()
 
   /**
@@ -152,91 +178,92 @@ public class BlockChain {
    * that is correct for its contents, and (d) that every block has a valid hash.
    *
    * @return true if the blockchain is correct and false otherwise.
-      * @throws NoSuchAlgorithmException 
-      */
-     public boolean isCorrect() throws NoSuchAlgorithmException {
-      //check balance
-    for(int i = 0; i < balance.size(); i++) {
+   * @throws NoSuchAlgorithmException
+   */
+  public boolean isCorrect() throws NoSuchAlgorithmException {
+    // check balance
+    for (int i = 0; i < balance.size(); i++) {
       if (balance.getElement(i).getVal() < 0) {
         return false;
-      }
-    }
+      } // if
+    } // for
     if (this.length == 0) {
       return true;
-    }
+    } // if
     BlockNode currNode = this.first.getNext();
-    //store prev before compute changes hash
+    // store prev before compute changes hash
     Hash prev = currNode.getBlock().getHash();
     currNode.getBlock().computeHash();
     // check case c, d
     if (prev != currNode.getBlock().getHash() || !simpleValidator.isValid(prev)) {
       return false;
-    }
+    } // if
     Hash curr;
-    while(currNode.getNext() != null) {
+    while (currNode.getNext() != null) {
       currNode = currNode.getNext();
       curr = currNode.getBlock().getHash();
       currNode.getBlock().computeHash();
       // check case b, c, d
-      if (!prev.equals(curr) || curr != currNode.getBlock().getHash() || !simpleValidator.isValid(curr)) {
+      if (!prev.equals(curr) || curr != currNode.getBlock().getHash()
+          || !simpleValidator.isValid(curr)) {
         return false;
-      }
+      } // if
       prev = curr;
-    }
+    } // while
     return true;
   } // isCorrect()
 
-  
-  Iterator<String> users(){
+
+  static Iterator<String> users() {
     Iterator<String> it = new Iterator<String>() {
 
       private int index = 0;
 
       public boolean hasNext() {
         return index < balance.size();
-      }
+      } // hasNext
 
       public String next() {
         return balance.getElement(index).getKey();
-      }
+      } // next
     };
     return it;
-  }
+  } // users
 
-  Iterator<Block> blocks(){
+  static Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
 
       private int index = 0;
-      
+
       public boolean hasNext() {
         return index < length;
-      }
+      } // hasNext
 
       public Block next() {
         index++;
         first = first.getNext();
         return first.getBlock();
-      }
+      } // Next
     };
     return it;
-  }
+  } // blocks
 
-  Iterator<Transaction> entries(){
+  static Iterator<Transaction> entries() {
     Iterator<Transaction> it = new Iterator<Transaction>() {
 
       private int index = 0;
-      
+
       public boolean hasNext() {
         return index < length;
-      }
+      } // hasNext
 
       public Transaction next() {
         index++;
         first = first.getNext();
         return first.getBlock().getTransaction();
-      }
+      } // Next
     };
     return it;
-  }
+  } // entries
 
 } // class BlockChain
