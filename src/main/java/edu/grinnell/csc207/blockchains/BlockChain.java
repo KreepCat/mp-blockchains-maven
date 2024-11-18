@@ -31,16 +31,13 @@ public class BlockChain {
    * Create a new blockchain using a validator to check elements.
    *
    * @param check The validator used to check elements.
-<<<<<<< HEAD
-=======
    * @throws NoSuchAlgorithmException
->>>>>>> fdc52bd084e04fdfb4f8cae2172e427c2a009438
    */
   public BlockChain(HashValidator check) throws NoSuchAlgorithmException {
     //STUB: Should the length initially be 1 or 0 (Does the first count?)
     this.length = 0;
-    this.first = null;
-    this.last = null;
+    this.first = new BlockNode(null, null, new Block(0, new Transaction("", "", 0), new Hash(new byte[] {}), simpleValidator);)
+    this.last = this.first;
   } // BlockChain(HashValidator)
 
   // +---------+-----------------------------------------------------
@@ -194,6 +191,7 @@ public class BlockChain {
 
       public Block next() {
         index++;
+        first = first.getNext();
         return first.getBlock();
       }
     };
@@ -211,6 +209,7 @@ public class BlockChain {
 
       public Transaction next() {
         index++;
+        first = first.getNext();
         return first.getBlock().getTransaction();
       }
     };

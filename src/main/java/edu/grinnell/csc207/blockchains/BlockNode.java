@@ -33,7 +33,7 @@ public class BlockNode {
     this.prevNode = prev;
   }
 
-  public BlockNode getNext(BlockNode next) {
+  public BlockNode getNext() {
     return this.nextNode;
   }
 
