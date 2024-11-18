@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.util.Arrays;
-
 /**
  * A variety of utilities for getting input.
  *

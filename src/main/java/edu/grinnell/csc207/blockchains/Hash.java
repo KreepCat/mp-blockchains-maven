@@ -1,8 +1,5 @@
 package edu.grinnell.csc207.blockchains;
 
-import java.lang.reflect.Array;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -16,6 +13,9 @@ public class Hash {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
+  /**
+   * The collection of bytes.
+   */
   private byte[] bytes;
   // +--------------+------------------------------------------------
   // | Constructors |

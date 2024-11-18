@@ -10,17 +10,18 @@ import edu.grinnell.csc207.util.NullKeyException;
 /**
  * A full blockchain.
  *
- * @author Your Name Here
+ * @author Alex Pollock
+ * @author Kevin Tang
  */
 public class BlockChain {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
-  BlockNode first;
-  BlockNode last;
-  int length;
-  HashValidator simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
-  AssociativeArray<String, Integer> balance = new AssociativeArray<>();
+  private BlockNode first;
+  private BlockNode last;
+  private int length;
+  private HashValidator simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
+  private AssociativeArray<String, Integer> balance = new AssociativeArray<>();
 
 
   // +--------------+------------------------------------------------
@@ -30,14 +31,11 @@ public class BlockChain {
   /**
    * Create a new blockchain using a validator to check elements.
    *
-   * @param check The validator used to check elements.
-<<<<<<< HEAD
-=======
-   * @throws NoSuchAlgorithmException
->>>>>>> fdc52bd084e04fdfb4f8cae2172e427c2a009438
+   * @param check The validator used to check elements. <<<<<<< HEAD =======
+   * @throws NoSuchAlgorithmException >>>>>>> fdc52bd084e04fdfb4f8cae2172e427c2a009438
    */
   public BlockChain(HashValidator check) throws NoSuchAlgorithmException {
-    //STUB: Should the length initially be 1 or 0 (Does the first count?)
+    // STUB: Should the length initially be 1 or 0 (Does the first count?)
     this.length = 0;
     this.first = null;
     this.last = null;
@@ -46,7 +44,8 @@ public class BlockChain {
   // +---------+-----------------------------------------------------
   // | Helpers |
   // +---------+
-  //mode = 1 if append a block (add new transaction), mode = 0 if remove a block (step back for a transaction)
+  // mode = 1 if append a block (add new transaction), mode = 0 if remove a block (step back for a
+  // transaction)
   public void transaction(Block blk, int mode) throws NullKeyException, KeyNotFoundException {
     String from = blk.transaction.getSource();
     int amt = blk.transaction.getAmount();
@@ -56,7 +55,7 @@ public class BlockChain {
       balance.set(from, balance.get(from) + amt);
     } else {
       deposit(blk, mode);
-    }
+    } // if/else
     BlockNode newNode = new BlockNode(this.last, null, blk);
     this.last.setNext(newNode);
   } // transaction()
@@ -69,9 +68,9 @@ public class BlockChain {
       balance.set(to, balance.get(to) + amt);
     } else if (balance.hasKey(to) && mode == 0) {
       balance.set(to, balance.get(to) - amt);
-    }else {
+    } else {
       balance.set(to, amt);
-    }
+    } // if/else
   } // deposit()
 
   // +---------+-----------------------------------------------------
@@ -126,10 +125,10 @@ public class BlockChain {
    *
    * @return false if the chain has only one block (in which case it's not removed) or true
    *         otherwise (in which case the last block is removed).
-      * @throws KeyNotFoundException 
-      * @throws NullKeyException 
-      */
-     public boolean removeLast() throws NullKeyException, KeyNotFoundException {
+   * @throws KeyNotFoundException
+   * @throws NullKeyException
+   */
+  public boolean removeLast() throws NullKeyException, KeyNotFoundException {
     if (this.length <= 1) {
       return false;
     } else {
@@ -137,7 +136,7 @@ public class BlockChain {
       this.last = this.last.getPrev();
       this.last.setNext(null);
       return true;
-    }
+    } // if/else
   } // removeLast()
 
   /**
@@ -157,64 +156,65 @@ public class BlockChain {
    * @return true if the blockchain is correct and false otherwise.
    */
   public boolean isCorrect() {
-    for(int i = 0; i < balance.size(); i++) {
+    for (int i = 0; i < balance.size(); i++) {
       if (balance.getElement(i).getVal() < 0) {
         return false;
       }
     }
     return true;
-    //STUB (I don't quite understand what should we do to check hash (there're 3 cases)). Is it enough just using hashvalidator?)
+    // STUB (I don't quite understand what should we do to check hash (there're 3 cases)). Is it
+    // enough just using hashvalidator?)
   } // isCorrect()
 
-  
-  Iterator<String> users(){
+
+  Iterator<String> users() {
     Iterator<String> it = new Iterator<String>() {
 
       private int index = 0;
 
       public boolean hasNext() {
         return index < balance.size();
-      }
+      } // hasNext()
 
       public String next() {
         return balance.getElement(index).getKey();
-      }
+      } // next()
     };
     return it;
-  }
+  } // users()
 
-  Iterator<Block> blocks(){
+  Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
 
       private int index = 0;
-      
+
       public boolean hasNext() {
         return index < length;
-      }
+      } // hasNext()
 
       public Block next() {
         index++;
         return first.getBlock();
-      }
+      } // next()
     };
     return it;
-  }
+  } // blocks()
 
-  Iterator<Transaction> entries(){
+  Iterator<Transaction> entries() {
     Iterator<Transaction> it = new Iterator<Transaction>() {
 
       private int index = 0;
-      
+
       public boolean hasNext() {
         return index < length;
-      }
+      } // hasNext()
 
       public Transaction next() {
         index++;
         return first.getBlock().getTransaction();
-      }
+      } // next()
     };
     return it;
-  }
+  } // entries()
 
 } // class BlockChain
