@@ -152,15 +152,38 @@ public class BlockChain {
    * that is correct for its contents, and (d) that every block has a valid hash.
    *
    * @return true if the blockchain is correct and false otherwise.
-   */
-  public boolean isCorrect() {
+      * @throws NoSuchAlgorithmException 
+      */
+     public boolean isCorrect() throws NoSuchAlgorithmException {
+      //check balance
     for(int i = 0; i < balance.size(); i++) {
       if (balance.getElement(i).getVal() < 0) {
         return false;
       }
     }
+    if (this.length == 0) {
+      return true;
+    }
+    BlockNode currNode = this.first.getNext();
+    //store prev before compute changes hash
+    Hash prev = currNode.getBlock().getHash();
+    currNode.getBlock().computeHash();
+    // check case c, d
+    if (prev != currNode.getBlock().getHash() || !simpleValidator.isValid(prev)) {
+      return false;
+    }
+    Hash curr;
+    while(currNode.getNext() != null) {
+      currNode = currNode.getNext();
+      curr = currNode.getBlock().getHash();
+      currNode.getBlock().computeHash();
+      // check case b, c, d
+      if (!prev.equals(curr) || curr != currNode.getBlock().getHash() || !simpleValidator.isValid(curr)) {
+        return false;
+      }
+      prev = curr;
+    }
     return true;
-    //STUB (I don't quite understand what should we do to check hash (there're 3 cases)). Is it enough just using hashvalidator?)
   } // isCorrect()
 
   
