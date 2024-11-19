@@ -10,8 +10,19 @@ public class BlockNode {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
+  /**
+   * Previous Node of BlockNode.
+   */
   private BlockNode prevNode;
+
+  /**
+   * Next Node of BlockNode.
+   */
   private BlockNode nextNode;
+
+  /**
+   * Block stored by BlockNode.
+   */
   private Block info;
 
   // +--------------+------------------------------------------------
@@ -22,9 +33,9 @@ public class BlockNode {
    * The basic constructor for the node version of block.
    * @param prev the previous node
    * @param next the next node
-   * @param info the block
+   * @param information the block
    */
-  public BlockNode(BlockNode prev, BlockNode next, Block info) {
+  public BlockNode(BlockNode prev, BlockNode next, Block information) {
     this.prevNode = prev;
     this.nextNode = next;
     this.info = info;
@@ -64,7 +75,7 @@ public class BlockNode {
 
   /**
    * Set the next node.
-   * @param newInfo the next node
+   * @param next the next node
    */
   public void setNext(BlockNode next) {
     this.nextNode = next;
@@ -72,9 +83,9 @@ public class BlockNode {
 
   /**
    * Set the previous node.
-   * @param newInfo the previous node
+   * @param prev the previous node
    */
   public void setPrev(BlockNode prev) {
     this.prevNode = prev;
   } // setPrev()
-}
+} // BlockNode

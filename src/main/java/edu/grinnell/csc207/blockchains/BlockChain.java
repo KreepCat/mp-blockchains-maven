@@ -13,7 +13,7 @@ import edu.grinnell.csc207.util.NullKeyException;
  * @author Alex Pollock
  * @author Kevin Tang
  */
-public class BlockChain  {
+public class BlockChain {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
@@ -50,7 +50,6 @@ public class BlockChain  {
    * @throws NoSuchAlgorithmException >>>>>>> fdc52bd084e04fdfb4f8cae2172e427c2a009438
    */
   public BlockChain(HashValidator check) throws NoSuchAlgorithmException {
-    // STUB: Should the length initially be 1 or 0 (Does the first count?)
     this.length = 0;
     this.first = new BlockNode(null, null,
         new Block(0, new Transaction("", "", 0), new Hash(new byte[] {}), simpleValidator));
@@ -137,12 +136,10 @@ public class BlockChain  {
   /**
    * Add a block to the end of the chain.
    *
-   * @param blk
-   *   The block to add to the end of the chain.
+   * @param blk The block to add to the end of the chain.
    *
-   * @throws IllegalArgumentException if (a) the hash is not valid, (b)
-   *   the hash is not appropriate for the contents, or (c) the previous
-   *   hash is incorrect.
+   * @throws IllegalArgumentException if (a) the hash is not valid, (b) the hash is not appropriate
+   *         for the contents, or (c) the previous hash is incorrect.
    */
   public void append(Block blk) {
     BlockNode dummy = new BlockNode(this.last, null, blk);
@@ -234,7 +231,7 @@ public class BlockChain  {
       } // hasNext
 
       public String next() {
-        return balance.getElement(index).getKey();
+        return balance.getElement(index++).getKey();
       } // next
     };
     return it;
@@ -247,18 +244,16 @@ public class BlockChain  {
    */
   public Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
-
-      private int index = 0;
-
+      BlockNode curr = first.getNext();
 
       public boolean hasNext() {
-        return index < length;
+        return curr.getNext() != null;
       } // hasNext
 
       public Block next() {
-        index++;
-        first = first.getNext();
-        return first.getBlock();
+        Block result = curr.getBlock();
+        curr.setNext(curr.getNext().getNext());
+        return result;
       } // Next
     };
     return it;
@@ -270,18 +265,16 @@ public class BlockChain  {
    * @return an iterator for all the blocks in the chain.
    */
   public Iterator<Transaction> entries() {
+    Iterator<Block> blockIterator = this.blocks();
+
     Iterator<Transaction> it = new Iterator<Transaction>() {
 
-      private int index = 0;
-
       public boolean hasNext() {
-        return index < length;
+        return blockIterator.hasNext();
       } // hasNext
 
       public Transaction next() {
-        index++;
-        first = first.getNext();
-        return first.getBlock().getTransaction();
+        return blockIterator.next().transaction;
       } // next()
     };
     return it;
