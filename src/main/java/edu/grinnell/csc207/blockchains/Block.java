@@ -72,13 +72,12 @@ public class Block {
    * @param preveiousHash The hash of the previous block.
    * @param check The validator used to check the block.
    */
-  Block(int number, Transaction transact, Hash preveiousHash, HashValidator check) {
+  public Block(int number, Transaction transact, Hash preveiousHash, HashValidator check) {
     this.num = number;
     this.transaction = transact;
     this.prevHash = preveiousHash;
     Random rand = new Random();
     do {
-      // The real work
       this.nonce = rand.nextLong();
       try {
         this.computeHash();
@@ -99,7 +98,7 @@ public class Block {
    * @param previousHash The hash of the previous block.
    * @param inputNonce The nonce of the block.
    */
-  Block(int number, Transaction transact, Hash previousHash, long inputNonce) {
+  public Block(int number, Transaction transact, Hash previousHash, long inputNonce) {
     this.num = number;
     this.transaction = transact;
     this.prevHash = previousHash;

@@ -100,10 +100,13 @@ public class BlockChainUI {
           target = IOUtils.readLine(pen, eyes, "Target: ");
           amount = IOUtils.readInt(pen, eyes, "Amount: ");
           long nounce = IOUtils.readInt(pen, eyes, "Nounce: ");
+          Block newBlock = new Block(chain.getSize() + 1, new Transaction(source, target, amount),
+              chain.getHash(), nounce);
+          chain.append(newBlock);
           break;
 
         case "balance":
-          pen.printf("Command '%s' is not yet implemented", command);
+          String user = IOUtils.readLine(pen, eyes, "Please Enter a user: ");
           break;
 
         case "blocks":
