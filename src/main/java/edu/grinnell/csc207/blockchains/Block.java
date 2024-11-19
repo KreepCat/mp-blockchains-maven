@@ -3,11 +3,13 @@ package edu.grinnell.csc207.blockchains;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * Blocks to be stored in blockchains.
  *
- * @author Your Name Here
+ * @author Alex Pollock
+ * @author Kevin Tang
  * @author Samuel A. Rebelsky
  */
 public class Block {
@@ -56,11 +58,6 @@ public class Block {
    */
   MessageDigest md;
 
-  /**
-   * The validator.
-   */
-  HashValidator simpleValidator;
-
 
   // +--------------+------------------------------------------------
   // | Constructors |
@@ -79,7 +76,15 @@ public class Block {
     this.num = number;
     this.transaction = transact;
     this.prevHash = preveiousHash;
-    this.simpleValidator = check;
+    Random rand = new Random();
+    do {
+      // The real work
+      this.nonce = rand.nextLong();
+      try {
+        this.computeHash();
+      } catch (NoSuchAlgorithmException e) {
+      } // try/catch
+    } while (!check.isValid(currHash));
     try {
       computeHash();
     } catch (NoSuchAlgorithmException e) {
@@ -99,7 +104,6 @@ public class Block {
     this.transaction = transact;
     this.prevHash = previousHash;
     this.nonce = inputNonce;
-    this.simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
     try {
       this.computeHash();
     } catch (NoSuchAlgorithmException e) {
