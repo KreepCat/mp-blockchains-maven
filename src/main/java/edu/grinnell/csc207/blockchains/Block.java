@@ -44,11 +44,6 @@ public class Block {
   Hash prevHash;
 
   /**
-   * The nonce.
-   */
-  long nonce;
-
-  /**
    * The hash on this block.
    */
   Hash currHash;
@@ -58,6 +53,10 @@ public class Block {
    */
   MessageDigest md;
 
+  /**
+   * The nonce.
+   */
+  long nonce;
 
   // +--------------+------------------------------------------------
   // | Constructors |
