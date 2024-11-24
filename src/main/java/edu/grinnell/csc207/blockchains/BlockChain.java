@@ -2,7 +2,6 @@ package edu.grinnell.csc207.blockchains;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
-import java.util.Random;
 import edu.grinnell.csc207.util.AssociativeArray;
 import edu.grinnell.csc207.util.KeyNotFoundException;
 import edu.grinnell.csc207.util.NullKeyException;
@@ -124,7 +123,6 @@ public class BlockChain {
    */
   public Block mine(Transaction t) throws NullKeyException, KeyNotFoundException {
     Block tmp = new Block(length, t, getHash(), simpleValidator);
-    // transaction(tmp, 1);
     return tmp;
   } // mine(Transaction)
 
@@ -147,9 +145,23 @@ public class BlockChain {
    * @throws IllegalArgumentException if (a) the hash is not valid, (b) the hash is not appropriate
    *         for the contents, or (c) the previous hash is incorrect.
    */
-  public void append(Block blk) throws NullKeyException, KeyNotFoundException {
+  public void append(Block blk) throws IllegalArgumentException {
+    if (!(simpleValidator.isValid(blk.getHash()))) {
+      throw new IllegalArgumentException();
+    }
+    Block sampleBlock = blk;
+    try {
+      sampleBlock.computeHash();
+    } catch (NoSuchAlgorithmException e) {
+    }
+    if (!(blk.getHash().equals(sampleBlock.getHash()))) {
+      throw new IllegalArgumentException();
+    }
     BlockNode dummy = new BlockNode(this.last, null, blk);
-    transaction(blk, 1);
+    try {
+      transaction(blk, 1);
+    } catch (Exception e) {
+    }
     this.last.setNext(dummy);
     this.last = dummy;
     this.length++;
@@ -170,7 +182,7 @@ public class BlockChain {
       try {
         transaction(this.last.getBlock(), 0);
       } catch (Exception e) {
-      }
+      } // try/catch
       this.last = this.last.getPrev();
       this.last.setNext(null);
       this.length--;
@@ -202,7 +214,7 @@ public class BlockChain {
         return false;
       } // if
     } // for
-    if (this.length == 0) {
+    if (this.length == 1) {
       return true;
     } // if
     BlockNode currNode = this.first.getNext();
@@ -211,7 +223,7 @@ public class BlockChain {
     currNode.getBlock().computeHash();
     // check case c, d
     if (prev != currNode.getBlock().getHash() || !simpleValidator.isValid(prev)) {
-      //return false;
+      return false;
     } // if
     Hash curr;
     while (currNode.getNext() != null) {
@@ -221,7 +233,7 @@ public class BlockChain {
       // check case b, c, d
       if (!prev.equals(curr) || curr != currNode.getBlock().getHash()
           || !simpleValidator.isValid(curr)) {
-        //return false;
+        return false;
       } // if
       prev = curr;
     } // while
@@ -237,9 +249,10 @@ public class BlockChain {
    * @throws Exception If things are wrong at any block.
    */
   public void check() throws Exception {
-    if ( !this.isCorrect()) {
-      throw new Exception();
-    }
+    if (this.isCorrect()) {
+      return;
+    } // if
+    throw new Exception();
   } // check()
 
   /**
@@ -275,7 +288,7 @@ public class BlockChain {
       return this.balance.get(user);
     } catch (KeyNotFoundException e) {
       return 0;
-    }
+    } // try/catch
   } // balance()
 
   /**
