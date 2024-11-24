@@ -149,9 +149,10 @@ public class BlockChain {
     if (!(simpleValidator.isValid(blk.getHash()))) {
       throw new IllegalArgumentException();
     }
-    Block sampleBlock = new Block(blk.getNum(), blk.getTransaction(), this.last.getBlock().getHash(), blk.getNonce());
+    Block sampleBlock = new Block(blk.getNum(), blk.getTransaction(),
+        this.last.getBlock().getHash(), blk.getNonce());
     // try {
-    //   sampleBlock.computeHash();
+    // sampleBlock.computeHash();
     // } catch (NoSuchAlgorithmException e) {
     // }
     if (!(blk.getHash().equals(sampleBlock.getHash()))) {
@@ -210,8 +211,37 @@ public class BlockChain {
   public boolean isCorrect() {
     if (length == 1) {
       return true;
+<<<<<<< HEAD
     }
     return isCorrectHelper(first, new AssociativeArray<String, Integer>());
+=======
+    } // if
+    BlockNode currNode = this.first.getNext();
+    Block currBlock = currNode.getBlock();
+    // store prev before compute changes hash
+    Hash prev = currNode.getBlock().getHash();
+    Block sampleBlock = new Block(currBlock.getNum(), currBlock.getTransaction(), currNode.getPrev().getBlock().getHash(), currBlock.getNonce());
+    //currNode.getBlock().computeHash();
+    // check case c, d
+    if (!prev.equals(sampleBlock.getHash()) || !simpleValidator.isValid(prev)) {
+      return false;
+    } // if
+    Hash curr;
+    while (currNode.getNext() != null) {
+      currNode = currNode.getNext();
+      curr = currNode.getBlock().getHash();
+      //currNode.getBlock().computeHash();
+      currBlock = currNode.getBlock();
+      sampleBlock = new Block(currBlock.getNum(), currBlock.getTransaction(), currNode.getPrev().getBlock().getHash(), currBlock.getNonce());
+      // check case b, c, d
+      if (!prev.equals(currNode.getPrev().getBlock().getHash()) || !curr.equals(sampleBlock.getHash())
+          || !simpleValidator.isValid(curr)) {
+        return false;
+      } // if
+      prev = curr;
+    } // while
+    return true;
+>>>>>>> main
   } // isCorrect()
 
   public boolean isCorrectHelper(BlockNode blknd, AssociativeArray<String, Integer> users) {
@@ -289,12 +319,28 @@ public class BlockChain {
    * @throws NullKeyException
    */
   public int balance(String user) throws NullKeyException {
+<<<<<<< HEAD
     try {
       // reset();
       return this.balance.get(user);
     } catch (KeyNotFoundException e) {
       return 0;
     } // try/catch
+=======
+    BlockNode currNode = this.first;
+    int total = 0;
+    while (currNode != null) {
+      Transaction thisTransaction = currNode.getBlock().getTransaction();
+      if (thisTransaction.getSource().equals(user)) {
+        total -= thisTransaction.getAmount();
+      }
+      if (thisTransaction.getTarget().equals(user)) {
+        total += thisTransaction.getAmount();
+      }
+      currNode = currNode.getNext();
+    }
+    return total;
+>>>>>>> main
   } // balance()
 
   /**
