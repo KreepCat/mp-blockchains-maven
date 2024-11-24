@@ -218,22 +218,26 @@ public class BlockChain {
       return true;
     } // if
     BlockNode currNode = this.first.getNext();
+    Block currBlock = currNode.getBlock();
     // store prev before compute changes hash
     Hash prev = currNode.getBlock().getHash();
-    currNode.getBlock().computeHash();
+    Block sampleBlock = new Block(currBlock.getNum(), currBlock.getTransaction(), currNode.getPrev().getBlock().getHash(), currBlock.getNonce());
+    //currNode.getBlock().computeHash();
     // check case c, d
-    if (prev.equals(currNode.getBlock().getHash()) || !simpleValidator.isValid(prev)) {
-     // return false;
+    if (!prev.equals(sampleBlock.getHash()) || !simpleValidator.isValid(prev)) {
+      return false;
     } // if
     Hash curr;
     while (currNode.getNext() != null) {
       currNode = currNode.getNext();
       curr = currNode.getBlock().getHash();
-      currNode.getBlock().computeHash();
+      //currNode.getBlock().computeHash();
+      currBlock = currNode.getBlock();
+      sampleBlock = new Block(currBlock.getNum(), currBlock.getTransaction(), currNode.getPrev().getBlock().getHash(), currBlock.getNonce());
       // check case b, c, d
-      if (!prev.equals(curr) || curr.equals(currNode.getBlock().getHash())
+      if (!prev.equals(currNode.getPrev().getBlock().getHash()) || !curr.equals(sampleBlock.getHash())
           || !simpleValidator.isValid(curr)) {
-        //return false;
+        return false;
       } // if
       prev = curr;
     } // while
