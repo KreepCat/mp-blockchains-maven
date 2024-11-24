@@ -239,7 +239,7 @@ public class BlockChain {
   public Iterator<String> users() {
     Iterator<String> it = new Iterator<String>() {
 
-      private int index = 1;
+      private int index = 0;
 
       public boolean hasNext() {
         return index < balance.size();
