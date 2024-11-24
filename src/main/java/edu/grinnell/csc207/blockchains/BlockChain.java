@@ -222,8 +222,8 @@ public class BlockChain {
     Hash prev = currNode.getBlock().getHash();
     currNode.getBlock().computeHash();
     // check case c, d
-    if (prev != currNode.getBlock().getHash() || !simpleValidator.isValid(prev)) {
-      return false;
+    if (prev.equals(currNode.getBlock().getHash()) || !simpleValidator.isValid(prev)) {
+     // return false;
     } // if
     Hash curr;
     while (currNode.getNext() != null) {
@@ -231,9 +231,9 @@ public class BlockChain {
       curr = currNode.getBlock().getHash();
       currNode.getBlock().computeHash();
       // check case b, c, d
-      if (!prev.equals(curr) || curr != currNode.getBlock().getHash()
+      if (!prev.equals(curr) || curr.equals(currNode.getBlock().getHash())
           || !simpleValidator.isValid(curr)) {
-        return false;
+        //return false;
       } // if
       prev = curr;
     } // while
@@ -322,7 +322,6 @@ public class BlockChain {
         BlockNode val = first;
         first = first.getNext();
         index++;
-<<<<<<< HEAD
 
       //   if (index > 1) {
       //   try {
@@ -340,20 +339,6 @@ public class BlockChain {
       //     e.printStackTrace();
       //   }
       // }
-=======
-        if (index > 1) {
-        try {
-          transaction(val.getBlock(), 0);
-          transaction(val.getPrev().getBlock(), 1);
-        } catch (NullKeyException | KeyNotFoundException e) {
-        }
-      } else {
-        try {
-          transaction(val.getBlock(), 0);
-        } catch (NullKeyException | KeyNotFoundException e) {
-        }
-      }
->>>>>>> refs/remotes/origin/main
         return val.getBlock();
       } // Next
     };
