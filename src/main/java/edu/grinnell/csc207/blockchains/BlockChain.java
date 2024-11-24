@@ -149,11 +149,11 @@ public class BlockChain {
     if (!(simpleValidator.isValid(blk.getHash()))) {
       throw new IllegalArgumentException();
     }
-    Block sampleBlock = blk;
-    try {
-      sampleBlock.computeHash();
-    } catch (NoSuchAlgorithmException e) {
-    }
+    Block sampleBlock = new Block(blk.getNum(), blk.getTransaction(), this.last.getBlock().getHash(), blk.getNonce());
+    // try {
+    //   sampleBlock.computeHash();
+    // } catch (NoSuchAlgorithmException e) {
+    // }
     if (!(blk.getHash().equals(sampleBlock.getHash()))) {
       throw new IllegalArgumentException();
     }
