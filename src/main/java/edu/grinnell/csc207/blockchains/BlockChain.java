@@ -36,7 +36,7 @@ public class BlockChain {
   /**
    * Associative array to store balance.
    */
-  AssociativeArray<String, Integer> balance = new AssociativeArray<String, Integer>();
+  AssociativeArray<String, Integer> balance;
 
 
   // +--------------+------------------------------------------------
@@ -54,6 +54,7 @@ public class BlockChain {
     this.first = new BlockNode(null, null,
         new Block(0, new Transaction("", "", 0), new Hash(new byte[] {}), simpleValidator));
     this.last = this.first;
+    this.balance = new AssociativeArray<String, Integer>();
   } // BlockChain(HashValidator)
 
   // +---------+-----------------------------------------------------
@@ -68,10 +69,12 @@ public class BlockChain {
   public void transaction(Block blk, int mode) throws NullKeyException, KeyNotFoundException {
     String from = blk.transaction.getSource();
     int amt = blk.transaction.getAmount();
-    if (balance.hasKey(from) && mode == 1) {
-      balance.set(from, balance.get(from) - amt);
+    if (this.balance.hasKey(from) && mode == 1) {
+      this.balance.set(from, balance.get(from) - amt);
+      deposit(blk, mode);
     } else if (balance.hasKey(from) && mode == 0) {
-      balance.set(from, balance.get(from) + amt);
+      this.balance.set(from, balance.get(from) + amt);
+      deposit(blk, mode);
     } else {
       deposit(blk, mode);
     } // if/else
@@ -107,9 +110,13 @@ public class BlockChain {
    * @param t The transaction that goes in the block.
    *
    * @return a new block with correct number, hashes, and such.
+   * @throws KeyNotFoundException
+   * @throws NullKeyException
    */
-  public Block mine(Transaction t) {
-    return new Block(length, t, getHash(), simpleValidator);
+  public Block mine(Transaction t) throws NullKeyException, KeyNotFoundException {
+    Block tmp = new Block(length, t, getHash(), simpleValidator);
+    // transaction(tmp, 1);
+    return tmp;
   } // mine(Transaction)
 
   /**
@@ -125,23 +132,20 @@ public class BlockChain {
    * Add a block to the end of the chain.
    *
    * @param blk The block to add to the end of the chain.
+   * @throws KeyNotFoundException
+   * @throws NullKeyException
    *
    * @throws IllegalArgumentException if (a) the hash is not valid, (b) the hash is not appropriate
    *         for the contents, or (c) the previous hash is incorrect.
    */
-  public void append(Block blk) {
+  public void append(Block blk) throws NullKeyException, KeyNotFoundException {
     BlockNode dummy = new BlockNode(this.last, null, blk);
+    transaction(blk, 1);
     this.last.setNext(dummy);
     this.last = dummy;
     String source = dummy.getBlock().getTransaction().getSource();
     String target = dummy.getBlock().getTransaction().getTarget();
     int amount = dummy.getBlock().getTransaction().getAmount();
-    try {
-      balance.set(source,balance.get(source)-amount);
-      balance.set(target,balance.get(target)+amount);
-    } catch (Exception e) {
-
-    }
     this.length++;
   } // append()
 
