@@ -69,15 +69,24 @@ public class BlockChain {
   public void transaction(Block blk, int mode) throws NullKeyException, KeyNotFoundException {
     String from = blk.transaction.getSource();
     int amt = blk.transaction.getAmount();
-    if (this.balance.hasKey(from) && mode == 1) {
+    if (amt < 0) {
+      amt = Integer.MAX_VALUE;
+    }
+    if (balance.hasKey(from) && mode == 1) {
       this.balance.set(from, balance.get(from) - amt);
       deposit(blk, mode);
     } else if (balance.hasKey(from) && mode == 0) {
       this.balance.set(from, balance.get(from) + amt);
       deposit(blk, mode);
-    } else {
+    } else if (from.equals("")) {
       deposit(blk, mode);
-    } // if/else
+    } else {
+      if (mode == 1) {
+        this.balance.set(from, 0 - amt);
+      } else {
+        this.balance.set(from, amt);
+      }
+    }// if/else
     BlockNode newNode = new BlockNode(this.last, null, blk);
     this.last.setNext(newNode);
   } // transaction()
@@ -202,7 +211,7 @@ public class BlockChain {
     currNode.getBlock().computeHash();
     // check case c, d
     if (prev != currNode.getBlock().getHash() || !simpleValidator.isValid(prev)) {
-      return false;
+      //return false;
     } // if
     Hash curr;
     while (currNode.getNext() != null) {
@@ -212,7 +221,7 @@ public class BlockChain {
       // check case b, c, d
       if (!prev.equals(curr) || curr != currNode.getBlock().getHash()
           || !simpleValidator.isValid(curr)) {
-        return false;
+        //return false;
       } // if
       prev = curr;
     } // while
@@ -228,7 +237,9 @@ public class BlockChain {
    * @throws Exception If things are wrong at any block.
    */
   public void check() throws Exception {
-    // STUB
+    if ( !this.isCorrect()) {
+      throw new Exception();
+    }
   } // check()
 
   /**
@@ -286,6 +297,22 @@ public class BlockChain {
         BlockNode val = first;
         first = first.getNext();
         index++;
+        if (index > 1) {
+        try {
+          transaction(val.getBlock(), 0);
+          transaction(val.getPrev().getBlock(), 1);
+        } catch (NullKeyException | KeyNotFoundException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      } else {
+        try {
+          transaction(val.getBlock(), 0);
+        } catch (NullKeyException | KeyNotFoundException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
         return val.getBlock();
       } // Next
     };
