@@ -208,14 +208,13 @@ public class BlockChain {
    * @return true if the blockchain is correct and false otherwise.
    * @throws NoSuchAlgorithmException
    */
-  public boolean isCorrect() throws NoSuchAlgorithmException {
-    // check balance
-    for (int i = 0; i < balance.size(); i++) {
+  public boolean isCorrect() {
+    for(int i = 0; i < balance.size(); i++) {
       if (balance.getElement(i).getVal() < 0) {
         return false;
-      } // if
-    } // for
-    if (this.length == 1) {
+      }
+    }
+    if (length == 1) {
       return true;
     } // if
     BlockNode currNode = this.first.getNext();
@@ -245,15 +244,33 @@ public class BlockChain {
     return true;
   } // isCorrect()
 
+  public boolean isCorrectHelper(BlockNode blknd, AssociativeArray<String, Integer> users) {
+    // Checking (a)
+    Transaction thisTransaction = blknd.getBlock().getTransaction();
+    if (thisTransaction.getSource().equals("")) {
+
+    }
+    return true;
+  }
+
+  public void addingMoney(String user, AssociativeArray<String, Integer> users, int amount) {
+    try {
+      if (users.hasKey(user)) {
+        users.set(user, users.get(user) + amount);
+      }
+      users.set(user, amount);
+    } catch (Exception e) {
+    }
+  }
+
   public void reset() throws NullKeyException, KeyNotFoundException {
-    BlockNode curr = this.first.getNext();
+    Iterator<Block> blocks = this.blocks();
     // for (int i = 0; i < balance.size(); i++) {
     // balance.remove(balance.getElement(0).getKey());
     // }
     this.balance = new AssociativeArray<String, Integer>();
-    while (curr.getNext() != null) {
-      transaction(curr.getBlock(), 1);
-      curr = curr.getNext();
+    while (blocks.hasNext()) {
+      transaction(blocks.next(), 1);
     }
   }
 
@@ -300,10 +317,8 @@ public class BlockChain {
    *
    * @return that user's balance (or 0, if the user is not in the system).
    * @throws NullKeyException
-      * @throws KeyNotFoundException 
-      */
-     public int balance(String user) throws NullKeyException, KeyNotFoundException {
-    this.reset();
+   */
+  public int balance(String user) throws NullKeyException {
     BlockNode currNode = this.first;
     int total = 0;
     while (currNode != null) {
@@ -327,6 +342,7 @@ public class BlockChain {
   public Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
       private int index = 0;
+      private BlockNode current = first;
 
 
       public boolean hasNext() {
@@ -334,26 +350,9 @@ public class BlockChain {
       } // hasNext
 
       public Block next() {
-        BlockNode val = first;
-        first = first.getNext();
+        BlockNode val = current;
+        current = current.getNext();
         index++;
-
-        // if (index > 1) {
-        // try {
-        // transaction(val.getBlock(), 0);
-        // transaction(val.getPrev().getBlock(), 1);
-        // } catch (NullKeyException | KeyNotFoundException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-        // } else {
-        // try {
-        // transaction(val.getBlock(), 0);
-        // } catch (NullKeyException | KeyNotFoundException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-        // }
         return val.getBlock();
       } // Next
     };
