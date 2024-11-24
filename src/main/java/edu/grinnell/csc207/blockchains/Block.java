@@ -115,11 +115,9 @@ public class Block {
   /**
    * Convert an integer into its bytes.
    *
-   * @param i
-   *   The integer to convert.
+   * @param i The integer to convert.
    *
-   * @return
-   *   The bytes of that integer.
+   * @return The bytes of that integer.
    */
   static byte[] intToBytes(int i) {
     intBuffer.clear();
@@ -129,11 +127,9 @@ public class Block {
   /**
    * Convert a long into its bytes.
    *
-   * @param l
-   *   The long to convert.
+   * @param l The long to convert.
    *
-   * @return
-   *   The bytes in that long.
+   * @return The bytes in that long.
    */
   static byte[] longToBytes(long l) {
     longBuffer.clear();

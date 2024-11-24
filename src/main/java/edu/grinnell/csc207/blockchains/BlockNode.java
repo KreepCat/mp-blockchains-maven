@@ -38,7 +38,7 @@ public class BlockNode {
   public BlockNode(BlockNode prev, BlockNode next, Block information) {
     this.prevNode = prev;
     this.nextNode = next;
-    this.info = info;
+    this.info = information;
   } // BlockNode()
 
   /**

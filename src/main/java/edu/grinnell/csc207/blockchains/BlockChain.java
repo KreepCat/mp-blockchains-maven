@@ -36,7 +36,7 @@ public class BlockChain {
   /**
    * Associative array to store balance.
    */
-  static AssociativeArray<String, Integer> balance = new AssociativeArray<>();
+  AssociativeArray<String, Integer> balance = new AssociativeArray<>();
 
 
   // +--------------+------------------------------------------------
@@ -46,11 +46,11 @@ public class BlockChain {
   /**
    * Create a new blockchain using a validator to check elements.
    *
-   * @param check The validator used to check elements. <<<<<<< HEAD =======
-   * @throws NoSuchAlgorithmException >>>>>>> fdc52bd084e04fdfb4f8cae2172e427c2a009438
+   * @param check The validator used to check elements.
    */
-  public BlockChain(HashValidator check) throws NoSuchAlgorithmException {
-    this.length = 0;
+  public BlockChain(HashValidator check) {
+    this.length = 1;
+    this.simpleValidator = check;
     this.first = new BlockNode(null, null,
         new Block(0, new Transaction("", "", 0), new Hash(new byte[] {}), simpleValidator));
     this.last = this.first;
@@ -107,21 +107,9 @@ public class BlockChain {
    * @param t The transaction that goes in the block.
    *
    * @return a new block with correct number, hashes, and such.
-   * @throws NoSuchAlgorithmException
    */
   public Block mine(Transaction t) {
-    long nonce;
-    Random random = new Random();
-    Block newBlock;
-    do {
-      nonce = random.nextLong();
-      if (this.length == 0) {
-        newBlock = new Block(length, t, null, nonce);
-      } else {
-        newBlock = new Block(length, t, this.getHash(), nonce);
-      } // if/else
-    } while (!simpleValidator.isValid(newBlock.getHash()));
-    return newBlock;
+    return new Block(length, t, getHash(), simpleValidator);
   } // mine(Transaction)
 
   /**
@@ -145,6 +133,7 @@ public class BlockChain {
     BlockNode dummy = new BlockNode(this.last, null, blk);
     this.last.setNext(dummy);
     this.last = dummy;
+    this.length++;
   } // append()
 
   /**
@@ -155,13 +144,17 @@ public class BlockChain {
    * @throws KeyNotFoundException
    * @throws NullKeyException
    */
-  public boolean removeLast() throws NullKeyException, KeyNotFoundException {
+  public boolean removeLast() {
     if (this.length <= 1) {
       return false;
     } else {
-      transaction(this.last.getBlock(), 0);
+      try {
+        transaction(this.last.getBlock(), 0);
+      } catch (Exception e) {
+      }
       this.last = this.last.getPrev();
       this.last.setNext(null);
+      this.length--;
       return true;
     } // if/else
   } // removeLast()
@@ -169,7 +162,7 @@ public class BlockChain {
   /**
    * Get the hash of the last block in the chain.
    *
-   * @return the hash of the last sblock in the chain.
+   * @return the hash of the last block in the chain.
    */
   public Hash getHash() {
     return this.last.getBlock().getHash();
@@ -216,6 +209,18 @@ public class BlockChain {
     return true;
   } // isCorrect()
 
+
+  /**
+   * Determine if the blockchain is correct in that (a) the balances are legal/correct at every
+   * step, (b) that every block has a correct previous hash field, (c) that every block has a hash
+   * that is correct for its contents, and (d) that every block has a valid hash.
+   *
+   * @throws Exception If things are wrong at any block.
+   */
+  public void check() throws Exception {
+    // STUB
+  } // check()
+
   /**
    * Return an iterator of all the people who participated in the system.
    *
@@ -224,7 +229,7 @@ public class BlockChain {
   public Iterator<String> users() {
     Iterator<String> it = new Iterator<String>() {
 
-      private int index = 0;
+      private int index = 1;
 
       public boolean hasNext() {
         return index < balance.size();
@@ -238,22 +243,40 @@ public class BlockChain {
   } // users
 
   /**
+   * Find one user's balance.
+   *
+   * @param user The user whose balance we want to find.
+   *
+   * @return that user's balance (or 0, if the user is not in the system).
+   */
+  public int balance(String user) {
+    try {
+      return this.balance.get(user);
+    } catch (KeyNotFoundException e) {
+      return 0;
+    }
+  } // balance()
+
+  /**
    * Get an interator for all the blocks in the chain.
    *
    * @return an iterator for all the blocks in the chain.
    */
   public Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
-      BlockNode curr = first.getNext();
+
+      private int index = 0;
+
 
       public boolean hasNext() {
-        return curr.getNext() != null;
+        return index < length;
       } // hasNext
 
       public Block next() {
-        Block result = curr.getBlock();
-        curr.setNext(curr.getNext().getNext());
-        return result;
+        BlockNode val = first;
+        first = first.getNext();
+        index++;
+        return val.getBlock();
       } // Next
     };
     return it;
@@ -265,16 +288,19 @@ public class BlockChain {
    * @return an iterator for all the blocks in the chain.
    */
   public Iterator<Transaction> entries() {
-    Iterator<Block> blockIterator = this.blocks();
-
     Iterator<Transaction> it = new Iterator<Transaction>() {
 
+      private int index = 0;
+
       public boolean hasNext() {
-        return blockIterator.hasNext();
+        return index < length;
       } // hasNext
 
       public Transaction next() {
-        return blockIterator.next().transaction;
+        BlockNode val = first;
+        first = first.getNext();
+        index++;
+        return val.getBlock().getTransaction();
       } // next()
     };
     return it;
