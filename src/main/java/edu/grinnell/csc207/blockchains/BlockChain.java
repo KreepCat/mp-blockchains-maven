@@ -70,7 +70,7 @@ public class BlockChain {
     int amt = blk.transaction.getAmount();
     if (amt < 0) {
       amt = Integer.MAX_VALUE;
-    }
+    } // if
     if (balance.hasKey(from) && mode == 1) {
       this.balance.set(from, balance.get(from) - amt);
       deposit(blk, mode);
@@ -84,7 +84,7 @@ public class BlockChain {
         this.balance.set(from, 0 - amt);
       } else {
         this.balance.set(from, amt);
-      }
+      } // else
     } // if/else
     BlockNode newNode = new BlockNode(this.last, null, blk);
     this.last.setNext(newNode);
@@ -148,21 +148,17 @@ public class BlockChain {
   public void append(Block blk) throws IllegalArgumentException {
     if (!(simpleValidator.isValid(blk.getHash()))) {
       throw new IllegalArgumentException();
-    }
+    } // if
     Block sampleBlock = new Block(blk.getNum(), blk.getTransaction(),
         this.last.getBlock().getHash(), blk.getNonce());
-    // try {
-    // sampleBlock.computeHash();
-    // } catch (NoSuchAlgorithmException e) {
-    // }
     if (!(blk.getHash().equals(sampleBlock.getHash()))) {
       throw new IllegalArgumentException();
-    }
+    } // if
     BlockNode dummy = new BlockNode(this.last, null, blk);
     try {
       transaction(blk, 1);
     } catch (Exception e) {
-    }
+    } // try/catch
     this.last.setNext(dummy);
     this.last = dummy;
     this.length++;
@@ -208,16 +204,22 @@ public class BlockChain {
    * @return true if the blockchain is correct and false otherwise.
    * @throws NoSuchAlgorithmException
    */
-  public boolean isCorrect() {
-    if (length == 1) {
+  public boolean isCorrect() throws NoSuchAlgorithmException {
+    // check balance
+    for (int i = 0; i < balance.size(); i++) {
+      if (balance.getElement(i).getVal() < 0) {
+        return false;
+      } // if
+    } // for
+    if (this.length == 1) {
       return true;
     } // if
     BlockNode currNode = this.first.getNext();
     Block currBlock = currNode.getBlock();
     // store prev before compute changes hash
     Hash prev = currNode.getBlock().getHash();
-    Block sampleBlock = new Block(currBlock.getNum(), currBlock.getTransaction(), currNode.getPrev().getBlock().getHash(), currBlock.getNonce());
-    //currNode.getBlock().computeHash();
+    Block sampleBlock = new Block(currBlock.getNum(), currBlock.getTransaction(),
+        currNode.getPrev().getBlock().getHash(), currBlock.getNonce());
     // check case c, d
     if (!prev.equals(sampleBlock.getHash()) || !simpleValidator.isValid(prev)) {
       return false;
@@ -226,12 +228,12 @@ public class BlockChain {
     while (currNode.getNext() != null) {
       currNode = currNode.getNext();
       curr = currNode.getBlock().getHash();
-      //currNode.getBlock().computeHash();
       currBlock = currNode.getBlock();
-      sampleBlock = new Block(currBlock.getNum(), currBlock.getTransaction(), currNode.getPrev().getBlock().getHash(), currBlock.getNonce());
+      sampleBlock = new Block(currBlock.getNum(), currBlock.getTransaction(),
+          currNode.getPrev().getBlock().getHash(), currBlock.getNonce());
       // check case b, c, d
-      if (!prev.equals(currNode.getPrev().getBlock().getHash()) || !curr.equals(sampleBlock.getHash())
-          || !simpleValidator.isValid(curr)) {
+      if (!prev.equals(currNode.getPrev().getBlock().getHash())
+          || !curr.equals(sampleBlock.getHash()) || !simpleValidator.isValid(curr)) {
         return false;
       } // if
       prev = curr;
@@ -239,35 +241,19 @@ public class BlockChain {
     return true;
   } // isCorrect()
 
-  public boolean isCorrectHelper(BlockNode blknd, AssociativeArray<String, Integer> users) {
-    // Checking (a)
-    Transaction thisTransaction = blknd.getBlock().getTransaction();
-    if (thisTransaction.getSource().equals("")) {
-
-    }
-    return true;
-  }
-
-  public void addingMoney(String user, AssociativeArray<String, Integer> users, int amount) {
-    try {
-      if (users.hasKey(user)) {
-        users.set(user, users.get(user) + amount);
-      }
-      users.set(user, amount);
-    } catch (Exception e) {
-    }
-  }
-
+  /**
+   * Reset the current balances.
+   *
+   * @throws NullKeyException
+   * @throws KeyNotFoundException
+   */
   public void reset() throws NullKeyException, KeyNotFoundException {
     Iterator<Block> blocks = this.blocks();
-    // for (int i = 0; i < balance.size(); i++) {
-    // balance.remove(balance.getElement(0).getKey());
-    // }
     this.balance = new AssociativeArray<String, Integer>();
     while (blocks.hasNext()) {
       transaction(blocks.next(), 1);
-    }
-  }
+    } // while
+  } // reset()
 
 
   /**
@@ -320,12 +306,12 @@ public class BlockChain {
       Transaction thisTransaction = currNode.getBlock().getTransaction();
       if (thisTransaction.getSource().equals(user)) {
         total -= thisTransaction.getAmount();
-      }
+      } // if
       if (thisTransaction.getTarget().equals(user)) {
         total += thisTransaction.getAmount();
-      }
+      } // if
       currNode = currNode.getNext();
-    }
+    } // while
     return total;
   } // balance()
 
