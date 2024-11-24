@@ -302,15 +302,11 @@ public class BlockChain {
           transaction(val.getBlock(), 0);
           transaction(val.getPrev().getBlock(), 1);
         } catch (NullKeyException | KeyNotFoundException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
         }
       } else {
         try {
           transaction(val.getBlock(), 0);
         } catch (NullKeyException | KeyNotFoundException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
         }
       }
         return val.getBlock();
