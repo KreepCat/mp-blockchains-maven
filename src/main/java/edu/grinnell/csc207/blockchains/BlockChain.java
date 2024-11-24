@@ -246,13 +246,14 @@ public class BlockChain {
   } // isCorrect()
 
   public void reset() throws NullKeyException, KeyNotFoundException {
-    Iterator<Block> blocks = this.blocks();
+    BlockNode curr = this.first.getNext();
     // for (int i = 0; i < balance.size(); i++) {
     // balance.remove(balance.getElement(0).getKey());
     // }
     this.balance = new AssociativeArray<String, Integer>();
-    while (blocks.hasNext()) {
-      transaction(blocks.next(), 1);
+    while (curr.getNext() != null) {
+      transaction(curr.getBlock(), 1);
+      curr = curr.getNext();
     }
   }
 
@@ -299,8 +300,10 @@ public class BlockChain {
    *
    * @return that user's balance (or 0, if the user is not in the system).
    * @throws NullKeyException
-   */
-  public int balance(String user) throws NullKeyException {
+      * @throws KeyNotFoundException 
+      */
+     public int balance(String user) throws NullKeyException, KeyNotFoundException {
+    this.reset();
     BlockNode currNode = this.first;
     int total = 0;
     while (currNode != null) {
