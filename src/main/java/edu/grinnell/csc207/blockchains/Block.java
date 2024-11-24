@@ -3,14 +3,16 @@ package edu.grinnell.csc207.blockchains;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * Blocks to be stored in blockchains.
  *
- * @author Your Name Here
+ * @author Alex Pollock
+ * @author Kevin Tang
  * @author Samuel A. Rebelsky
  */
-class Block {
+public class Block {
 
   /**
    * The byte buffer used for ints.
@@ -42,11 +44,6 @@ class Block {
   Hash prevHash;
 
   /**
-   * The nonce.
-   */
-  long nonce;
-
-  /**
    * The hash on this block.
    */
   Hash currHash;
@@ -57,10 +54,9 @@ class Block {
   MessageDigest md;
 
   /**
-   * The validator.
+   * The nonce.
    */
-  HashValidator simpleValidator;
-
+  long nonce;
 
   // +--------------+------------------------------------------------
   // | Constructors |
@@ -75,11 +71,18 @@ class Block {
    * @param preveiousHash The hash of the previous block.
    * @param check The validator used to check the block.
    */
-  Block(int number, Transaction transact, Hash preveiousHash, HashValidator check) {
+  public Block(int number, Transaction transact, Hash preveiousHash, HashValidator check) {
     this.num = number;
     this.transaction = transact;
     this.prevHash = preveiousHash;
-    this.simpleValidator = check;
+    Random rand = new Random();
+    do {
+      this.nonce = rand.nextLong();
+      try {
+        this.computeHash();
+      } catch (NoSuchAlgorithmException e) {
+      } // try/catch
+    } while (!check.isValid(currHash));
     try {
       computeHash();
     } catch (NoSuchAlgorithmException e) {
@@ -94,12 +97,11 @@ class Block {
    * @param previousHash The hash of the previous block.
    * @param inputNonce The nonce of the block.
    */
-  Block(int number, Transaction transact, Hash previousHash, long inputNonce) {
+  public Block(int number, Transaction transact, Hash previousHash, long inputNonce) {
     this.num = number;
     this.transaction = transact;
     this.prevHash = previousHash;
     this.nonce = inputNonce;
-    this.simpleValidator = (hash) -> (hash.length() >= 1) && (hash.get(0) == 0);
     try {
       this.computeHash();
     } catch (NoSuchAlgorithmException e) {
@@ -113,11 +115,9 @@ class Block {
   /**
    * Convert an integer into its bytes.
    *
-   * @param i
-   *   The integer to convert.
+   * @param i The integer to convert.
    *
-   * @return
-   *   The bytes of that integer.
+   * @return The bytes of that integer.
    */
   static byte[] intToBytes(int i) {
     intBuffer.clear();
@@ -127,11 +127,9 @@ class Block {
   /**
    * Convert a long into its bytes.
    *
-   * @param l
-   *   The long to convert.
+   * @param l The long to convert.
    *
-   * @return
-   *   The bytes in that long.
+   * @return The bytes in that long.
    */
   static byte[] longToBytes(long l) {
     longBuffer.clear();
@@ -163,7 +161,7 @@ class Block {
    *
    * @return the number of the block.
    */
-  int getNum() {
+  public int getNum() {
     return this.num;
   } // getNum()
 
@@ -172,7 +170,7 @@ class Block {
    *
    * @return the transaction.
    */
-  Transaction getTransaction() {
+  public Transaction getTransaction() {
     return this.transaction;
   } // getTransaction()
 
@@ -181,7 +179,7 @@ class Block {
    *
    * @return the nonce.
    */
-  long getNonce() {
+  public long getNonce() {
     return this.nonce;
   } // getNonce()
 
@@ -190,7 +188,7 @@ class Block {
    *
    * @return the hash of the previous block.
    */
-  Hash getPrevHash() {
+  public Hash getPrevHash() {
     return this.prevHash;
   } // getPrevHash
 

@@ -1,7 +1,11 @@
 package edu.grinnell.csc207.main;
 
+import edu.grinnell.csc207.blockchains.Block;
 import edu.grinnell.csc207.blockchains.BlockChain;
 import edu.grinnell.csc207.blockchains.HashValidator;
+import edu.grinnell.csc207.blockchains.Transaction;
+
+import edu.grinnell.csc207.util.IOUtils;
 
 import java.io.PrintWriter;
 import java.io.BufferedReader;
@@ -18,8 +22,9 @@ public class BlockChainUI {
   // | Constants |
   // +-----------+
 
-  // The number of bytes we validate. Should be set to 3 before
-  // submitting.
+  /**
+   * The number of bytes we validate. Should be set to 3 before submitting.
+   */
   static final int VALIDATOR_BYTES = 0;
 
   // +---------+-----------------------------------------------------
@@ -29,22 +34,21 @@ public class BlockChainUI {
   /**
    * Print out the instructions.
    *
-   * @param pen
-   *   The pen used for printing instructions.
+   * @param pen The pen used for printing instructions.
    */
   public static void instructions(PrintWriter pen) {
     pen.println("""
-      Valid commands:
-        mine: discovers the nonce for a given transaction
-        append: appends a new block onto the end of the chain
-        remove: removes the last block from the end of the chain
-        check: checks that the block chain is valid
-        users: prints a list of users
-        balance: finds a user's balance
-        transactions: prints out the chain of transactions
-        blocks: prints out the chain of blocks (for debugging only)
-        help: prints this list of commands
-        quit: quits the program""");
+        Valid commands:
+          mine: discovers the nonce for a given transaction
+          append: appends a new block onto the end of the chain
+          remove: removes the last block from the end of the chain
+          check: checks that the block chain is valid
+          users: prints a list of users
+          balance: finds a user's balance
+          transactions: prints out the chain of transactions
+          blocks: prints out the chain of blocks (for debugging only)
+          help: prints this list of commands
+          quit: quits the program""");
   } // instructions(PrintWriter)
 
   // +------+--------------------------------------------------------
@@ -54,31 +58,33 @@ public class BlockChainUI {
   /**
    * Run the UI.
    *
-   * @param args
-   *   Command-line arguments (currently ignored).
+   * @param args Command-line arguments (currently ignored).
    */
   public static void main(String[] args) throws Exception {
     PrintWriter pen = new PrintWriter(System.out, true);
     BufferedReader eyes = new BufferedReader(new InputStreamReader(System.in));
 
     // Set up our blockchain.
-    HashValidator validator = 
-      (h) -> {
-        if (h.length() < VALIDATOR_BYTES) {
+    HashValidator validator = (h) -> {
+      if (h.length() < VALIDATOR_BYTES) {
+        return false;
+      } // if
+      for (int v = 0; v < VALIDATOR_BYTES; v++) {
+        if (h.get(v) != 0) {
           return false;
         } // if
-        for (int v = 0; v < VALIDATOR_BYTES; v++) {
-          if (h.get(v) != 0) {
-            return false;
-          } // if
-        } // for
-        return true;
-      };
+      } // for
+      return true;
+    };
     BlockChain chain = new BlockChain(validator);
 
     instructions(pen);
 
     boolean done = false;
+
+    String source;
+    String target;
+    int amount;
 
     while (!done) {
       pen.print("\nCommand: ");
@@ -87,13 +93,60 @@ public class BlockChainUI {
       if (command == null) {
         command = "quit";
       } // if
+
       switch (command.toLowerCase()) {
+        case "append":
+          source = IOUtils.readLine(pen, eyes, "Source (return for deposit): ");
+          target = IOUtils.readLine(pen, eyes, "Target: ");
+          amount = IOUtils.readInt(pen, eyes, "Amount: ");
+          long nounce = IOUtils.readInt(pen, eyes, "Nounce: ");
+          Block newBlock = new Block(chain.getSize() + 1, new Transaction(source, target, amount),
+              chain.getHash(), nounce);
+          chain.append(newBlock);
+          break;
+
+        case "balance":
+          String user = IOUtils.readLine(pen, eyes, "Please Enter a user: ");
+          break;
+
+        case "blocks":
+          pen.printf("Command '%s' is not yet implemented", command);
+          break;
+
+        case "check":
+          pen.printf("Is the block chain valid: " + chain.isCorrect());
+          break;
+
         case "help":
           instructions(pen);
           break;
 
+        case "mine":
+          source = IOUtils.readLine(pen, eyes, "Source (return for deposit): ");
+          target = IOUtils.readLine(pen, eyes, "Target: ");
+          amount = IOUtils.readInt(pen, eyes, "Amount: ");
+          Block b = chain.mine(new Transaction(source, target, amount));
+          pen.println("Nonce: " + b.getNonce());
+          break;
+
         case "quit":
           done = true;
+          break;
+
+        case "remove":
+          if (chain.removeLast()) {
+            pen.printf("Removed the last element of the block chain.");
+          } else {
+            pen.printf("Could not remove the last element of the block chain");
+          } // if/else
+          break;
+
+        case "transactions":
+          pen.printf("Command '%s' is not yet implemented", command);
+          break;
+
+        case "users":
+          pen.printf("Command '%s' is not yet implemented", command);
           break;
 
         default:
