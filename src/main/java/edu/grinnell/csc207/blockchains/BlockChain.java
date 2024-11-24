@@ -211,10 +211,6 @@ public class BlockChain {
   public boolean isCorrect() {
     if (length == 1) {
       return true;
-<<<<<<< HEAD
-    }
-    return isCorrectHelper(first, new AssociativeArray<String, Integer>());
-=======
     } // if
     BlockNode currNode = this.first.getNext();
     Block currBlock = currNode.getBlock();
@@ -241,7 +237,6 @@ public class BlockChain {
       prev = curr;
     } // while
     return true;
->>>>>>> main
   } // isCorrect()
 
   public boolean isCorrectHelper(BlockNode blknd, AssociativeArray<String, Integer> users) {
@@ -319,14 +314,6 @@ public class BlockChain {
    * @throws NullKeyException
    */
   public int balance(String user) throws NullKeyException {
-<<<<<<< HEAD
-    try {
-      // reset();
-      return this.balance.get(user);
-    } catch (KeyNotFoundException e) {
-      return 0;
-    } // try/catch
-=======
     BlockNode currNode = this.first;
     int total = 0;
     while (currNode != null) {
@@ -340,7 +327,6 @@ public class BlockChain {
       currNode = currNode.getNext();
     }
     return total;
->>>>>>> main
   } // balance()
 
   /**
@@ -351,6 +337,7 @@ public class BlockChain {
   public Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
       private int index = 0;
+      private BlockNode current = first;
 
 
       public boolean hasNext() {
@@ -358,26 +345,9 @@ public class BlockChain {
       } // hasNext
 
       public Block next() {
-        BlockNode val = first;
-        first = first.getNext();
+        BlockNode val = current;
+        current = current.getNext();
         index++;
-
-        // if (index > 1) {
-        // try {
-        // transaction(val.getBlock(), 0);
-        // transaction(val.getPrev().getBlock(), 1);
-        // } catch (NullKeyException | KeyNotFoundException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-        // } else {
-        // try {
-        // transaction(val.getBlock(), 0);
-        // } catch (NullKeyException | KeyNotFoundException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-        // }
         return val.getBlock();
       } // Next
     };
