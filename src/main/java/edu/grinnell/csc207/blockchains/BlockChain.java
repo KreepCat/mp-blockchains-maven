@@ -36,7 +36,7 @@ public class BlockChain {
   /**
    * Associative array to store balance.
    */
-  AssociativeArray<String, Integer> balance = new AssociativeArray<>();
+  AssociativeArray<String, Integer> balance = new AssociativeArray<String, Integer>();
 
 
   // +--------------+------------------------------------------------
@@ -133,6 +133,15 @@ public class BlockChain {
     BlockNode dummy = new BlockNode(this.last, null, blk);
     this.last.setNext(dummy);
     this.last = dummy;
+    String source = dummy.getBlock().getTransaction().getSource();
+    String target = dummy.getBlock().getTransaction().getTarget();
+    int amount = dummy.getBlock().getTransaction().getAmount();
+    try {
+      balance.set(source,balance.get(source)-amount);
+      balance.set(target,balance.get(target)+amount);
+    } catch (Exception e) {
+
+    }
     this.length++;
   } // append()
 
@@ -229,7 +238,7 @@ public class BlockChain {
   public Iterator<String> users() {
     Iterator<String> it = new Iterator<String>() {
 
-      private int index = 1;
+      private int index = 0;
 
       public boolean hasNext() {
         return index < balance.size();
