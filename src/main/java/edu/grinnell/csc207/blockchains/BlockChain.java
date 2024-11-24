@@ -228,6 +228,17 @@ public class BlockChain {
     return true;
   } // isCorrect()
 
+  public void reset() throws NullKeyException, KeyNotFoundException {
+    Iterator<Block> blocks = this.blocks();
+    // for (int i = 0; i < balance.size(); i++) {
+    //   balance.remove(balance.getElement(0).getKey());
+    // }
+    this.balance = new AssociativeArray<String, Integer>();
+    while (blocks.hasNext()) {
+      transaction(blocks.next(), 1);
+    }
+  }
+
 
   /**
    * Determine if the blockchain is correct in that (a) the balances are legal/correct at every
@@ -269,9 +280,11 @@ public class BlockChain {
    * @param user The user whose balance we want to find.
    *
    * @return that user's balance (or 0, if the user is not in the system).
-   */
-  public int balance(String user) {
+      * @throws NullKeyException 
+      */
+     public int balance(String user) throws NullKeyException {
     try {
+      //reset();
       return this.balance.get(user);
     } catch (KeyNotFoundException e) {
       return 0;
@@ -285,9 +298,8 @@ public class BlockChain {
    */
   public Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
-
       private int index = 0;
-
+      
 
       public boolean hasNext() {
         return index < length;
@@ -297,22 +309,23 @@ public class BlockChain {
         BlockNode val = first;
         first = first.getNext();
         index++;
-        if (index > 1) {
-        try {
-          transaction(val.getBlock(), 0);
-          transaction(val.getPrev().getBlock(), 1);
-        } catch (NullKeyException | KeyNotFoundException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      } else {
-        try {
-          transaction(val.getBlock(), 0);
-        } catch (NullKeyException | KeyNotFoundException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
+
+      //   if (index > 1) {
+      //   try {
+      //     transaction(val.getBlock(), 0);
+      //     transaction(val.getPrev().getBlock(), 1);
+      //   } catch (NullKeyException | KeyNotFoundException e) {
+      //     // TODO Auto-generated catch block
+      //     e.printStackTrace();
+      //   }
+      // } else {
+      //   try {
+      //     transaction(val.getBlock(), 0);
+      //   } catch (NullKeyException | KeyNotFoundException e) {
+      //     // TODO Auto-generated catch block
+      //     e.printStackTrace();
+      //   }
+      // }
         return val.getBlock();
       } // Next
     };
