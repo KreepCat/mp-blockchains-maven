@@ -3,6 +3,7 @@ package edu.grinnell.csc207.blockchains;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
+import edu.grinnell.csc207.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -94,9 +95,11 @@ public class TestBlockChain {
 
   /**
    * Make sure that we can mine a block.
-   */
-  @Test
-  public void testMine() {
+      * @throws KeyNotFoundException 
+      * @throws NullKeyException 
+      */
+     @Test
+     public void testMine() throws NullKeyException, KeyNotFoundException {
     HashValidator v = 
         (hash) -> 
             (hash.length() >= 2) && (hash.get(0) == 2) && (hash.get(1) == 2);
@@ -115,9 +118,11 @@ public class TestBlockChain {
 
   /**
    * Make sure that we can append a few blocks.
-   */
-  @Test
-  public void testAppend() {
+      * @throws KeyNotFoundException 
+      * @throws NullKeyException 
+      */
+     @Test
+     public void testAppend() throws NullKeyException, KeyNotFoundException {
     HashValidator v = 
         (hash) -> 
             (hash.length() >= 2) && (hash.get(0) == 2) && (hash.get(1) == 1);
@@ -135,9 +140,11 @@ public class TestBlockChain {
 
   /**
    * Make sure that we can iterate the blocks after appending them.
-   */
-  @Test
-  public void testIterateBlocks() {
+      * @throws KeyNotFoundException 
+      * @throws NullKeyException 
+      */
+     @Test
+     public void testIterateBlocks() throws NullKeyException, KeyNotFoundException {
     HashValidator v = 
         (hash) -> 
             (hash.length() >= 2) && (hash.get(0) == 1) && (hash.get(1) == 3);
@@ -163,9 +170,11 @@ public class TestBlockChain {
 
   /**
    * Make sure that we can iterate the blocks after appending them.
-   */
-  @Test
-  public void testRemoveBlocks() {
+      * @throws KeyNotFoundException 
+      * @throws NullKeyException 
+      */
+     @Test
+     public void testRemoveBlocks() throws NullKeyException, KeyNotFoundException {
     HashValidator v = 
         (hash) -> 
             (hash.length() >= 2) && (hash.get(0) == 2) && (hash.get(1) == 3);
@@ -189,9 +198,11 @@ public class TestBlockChain {
 
   /**
    * Make sure that we can add and remove blocks.
-   */
-  @Test
-  public void testRemoveAndAppendBlocks() {
+      * @throws KeyNotFoundException 
+      * @throws NullKeyException 
+      */
+     @Test
+     public void testRemoveAndAppendBlocks() throws NullKeyException, KeyNotFoundException {
     HashValidator v = 
         (hash) -> 
             (hash.length() >= 2) && (hash.get(0) == 3) && (hash.get(1) == 3);
@@ -230,9 +241,11 @@ public class TestBlockChain {
 
   /**
    * Check balances.
-   */
-  @Test
-  public void testBalances() {
+      * @throws KeyNotFoundException 
+      * @throws NullKeyException 
+      */
+     @Test
+     public void testBalances() throws NullKeyException, KeyNotFoundException {
     HashValidator v = 
         (hash) -> 
             (hash.length() >= 2) && (hash.get(0) == 64) && (hash.get(1) == 64);
@@ -240,7 +253,7 @@ public class TestBlockChain {
     assertEquals(0, chain.balance("A"), "A's initial balance");
     assertEquals(0, chain.balance("B"), "B's initial balance");
     assertEquals(0, chain.balance("C"), "C's initial balance");
-
+    
     chain.append(chain.mine(new Transaction("", "A", 100)));
     assertEquals(100, chain.balance("A"), "A's second balance");
     assertEquals(0, chain.balance("B"), "B's second balance");
@@ -279,9 +292,11 @@ public class TestBlockChain {
 
   /**
    * Test the list of users.
-   */
-  @Test
-  public void testUsers() {
+      * @throws KeyNotFoundException 
+      * @throws NullKeyException 
+      */
+     @Test
+     public void testUsers() throws NullKeyException, KeyNotFoundException {
     HashValidator v = 
         (hash) -> 
             (hash.length() >= 2) && (hash.get(0) == 64) && (hash.get(1) == 64);
