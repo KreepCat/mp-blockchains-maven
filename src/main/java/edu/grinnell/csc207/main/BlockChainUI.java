@@ -10,11 +10,13 @@ import edu.grinnell.csc207.util.IOUtils;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 
 /**
  * A simple UI for our BlockChain class.
  *
- * @author Your Name Here
+ * @author Alex Pollock
+ * @author Kevin Tang
  * @author Samuel A. Rebelsky
  */
 public class BlockChainUI {
@@ -65,18 +67,10 @@ public class BlockChainUI {
     BufferedReader eyes = new BufferedReader(new InputStreamReader(System.in));
 
     // Set up our blockchain.
-    HashValidator validator = (h) -> {
-      if (h.length() < VALIDATOR_BYTES) {
-        return false;
-      } // if
-      for (int v = 0; v < VALIDATOR_BYTES; v++) {
-        if (h.get(v) != 0) {
-          return false;
-        } // if
-      } // for
-      return true;
-    };
+    HashValidator validator = (hash) -> (hash.length() >= 3) && (hash.get(0) == 0)
+        && (hash.get(1) == 0) && (hash.get(2) == 0);
     BlockChain chain = new BlockChain(validator);
+
 
     instructions(pen);
 
@@ -93,24 +87,34 @@ public class BlockChainUI {
       if (command == null) {
         command = "quit";
       } // if
+      Iterator<Block> blocks = chain.blocks();
+      Iterator<String> users = chain.users();
 
       switch (command.toLowerCase()) {
         case "append":
           source = IOUtils.readLine(pen, eyes, "Source (return for deposit): ");
           target = IOUtils.readLine(pen, eyes, "Target: ");
           amount = IOUtils.readInt(pen, eyes, "Amount: ");
-          long nounce = IOUtils.readInt(pen, eyes, "Nounce: ");
-          Block newBlock = new Block(chain.getSize() + 1, new Transaction(source, target, amount),
+          long nounce = IOUtils.readLong(pen, eyes, "Nounce: ");
+          Block newBlock = new Block(chain.getSize(), new Transaction(source, target, amount),
               chain.getHash(), nounce);
-          chain.append(newBlock);
+          try {
+            chain.append(newBlock);
+          } catch (Exception e) {
+            pen.printf("Could not append: Invalid hash in appended block: '%s'\n",
+                newBlock.getHash().toString());
+          } // try/catch
           break;
 
         case "balance":
           String user = IOUtils.readLine(pen, eyes, "Please Enter a user: ");
+          pen.printf("%s's balance is %d\n", user, chain.balance(user));
           break;
 
         case "blocks":
-          pen.printf("Command '%s' is not yet implemented", command);
+          while (blocks.hasNext()) {
+            pen.printf(blocks.next().toString() + "\n");
+          } // while
           break;
 
         case "check":
@@ -135,18 +139,27 @@ public class BlockChainUI {
 
         case "remove":
           if (chain.removeLast()) {
-            pen.printf("Removed the last element of the block chain.");
+            pen.printf("Removed the last element of the block chain.\n");
           } else {
-            pen.printf("Could not remove the last element of the block chain");
+            pen.printf("Could not remove the last element of the block chain.\n");
           } // if/else
           break;
 
         case "transactions":
-          pen.printf("Command '%s' is not yet implemented", command);
+          if (blocks.hasNext()) {
+            blocks.next();
+            while (blocks.hasNext()) {
+              pen.printf(blocks.next().getTransaction().toString());
+            } // while
+          } else {
+            pen.printf("There are currently no transactions.\n");
+          } // if/else
           break;
 
         case "users":
-          pen.printf("Command '%s' is not yet implemented", command);
+          while (users.hasNext()) {
+            pen.printf(users.next() + "\n");
+          } // while
           break;
 
         default:

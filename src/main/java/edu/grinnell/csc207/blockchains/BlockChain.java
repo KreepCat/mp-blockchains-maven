@@ -113,6 +113,15 @@ public class BlockChain {
   // +---------+
 
   /**
+   * Returns the first block in the chain.
+   *
+   * @return the first block in the chain
+   */
+  public BlockNode getFirst() {
+    return this.first;
+  } // getFirst()
+
+  /**
    * Mine for a new valid block for the end of the chain, returning that block.
    *
    * @param t The transaction that goes in the block.
@@ -139,8 +148,6 @@ public class BlockChain {
    * Add a block to the end of the chain.
    *
    * @param blk The block to add to the end of the chain.
-   * @throws KeyNotFoundException
-   * @throws NullKeyException
    *
    * @throws IllegalArgumentException if (a) the hash is not valid, (b) the hash is not appropriate
    *         for the contents, or (c) the previous hash is incorrect.
