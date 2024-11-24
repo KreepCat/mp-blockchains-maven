@@ -85,7 +85,7 @@ public class BlockChain {
       } else {
         this.balance.set(from, amt);
       }
-    }// if/else
+    } // if/else
     BlockNode newNode = new BlockNode(this.last, null, blk);
     this.last.setNext(newNode);
   } // transaction()
@@ -149,9 +149,10 @@ public class BlockChain {
     if (!(simpleValidator.isValid(blk.getHash()))) {
       throw new IllegalArgumentException();
     }
-    Block sampleBlock = new Block(blk.getNum(), blk.getTransaction(), this.last.getBlock().getHash(), blk.getNonce());
+    Block sampleBlock = new Block(blk.getNum(), blk.getTransaction(),
+        this.last.getBlock().getHash(), blk.getNonce());
     // try {
-    //   sampleBlock.computeHash();
+    // sampleBlock.computeHash();
     // } catch (NoSuchAlgorithmException e) {
     // }
     if (!(blk.getHash().equals(sampleBlock.getHash()))) {
@@ -247,7 +248,7 @@ public class BlockChain {
   public void reset() throws NullKeyException, KeyNotFoundException {
     Iterator<Block> blocks = this.blocks();
     // for (int i = 0; i < balance.size(); i++) {
-    //   balance.remove(balance.getElement(0).getKey());
+    // balance.remove(balance.getElement(0).getKey());
     // }
     this.balance = new AssociativeArray<String, Integer>();
     while (blocks.hasNext()) {
@@ -297,15 +298,22 @@ public class BlockChain {
    * @param user The user whose balance we want to find.
    *
    * @return that user's balance (or 0, if the user is not in the system).
-      * @throws NullKeyException 
-      */
-     public int balance(String user) throws NullKeyException {
-    try {
-      //reset();
-      return this.balance.get(user);
-    } catch (KeyNotFoundException e) {
-      return 0;
-    } // try/catch
+   * @throws NullKeyException
+   */
+  public int balance(String user) throws NullKeyException {
+    BlockNode currNode = this.first;
+    int total = 0;
+    while (currNode != null) {
+      Transaction thisTransaction = currNode.getBlock().getTransaction();
+      if (thisTransaction.getSource().equals(user)) {
+        total -= thisTransaction.getAmount();
+      }
+      if (thisTransaction.getTarget().equals(user)) {
+        total += thisTransaction.getAmount();
+      }
+      currNode = currNode.getNext();
+    }
+    return total;
   } // balance()
 
   /**
@@ -316,7 +324,7 @@ public class BlockChain {
   public Iterator<Block> blocks() {
     Iterator<Block> it = new Iterator<Block>() {
       private int index = 0;
-      
+
 
       public boolean hasNext() {
         return index < length;
@@ -327,22 +335,22 @@ public class BlockChain {
         first = first.getNext();
         index++;
 
-      //   if (index > 1) {
-      //   try {
-      //     transaction(val.getBlock(), 0);
-      //     transaction(val.getPrev().getBlock(), 1);
-      //   } catch (NullKeyException | KeyNotFoundException e) {
-      //     // TODO Auto-generated catch block
-      //     e.printStackTrace();
-      //   }
-      // } else {
-      //   try {
-      //     transaction(val.getBlock(), 0);
-      //   } catch (NullKeyException | KeyNotFoundException e) {
-      //     // TODO Auto-generated catch block
-      //     e.printStackTrace();
-      //   }
-      // }
+        // if (index > 1) {
+        // try {
+        // transaction(val.getBlock(), 0);
+        // transaction(val.getPrev().getBlock(), 1);
+        // } catch (NullKeyException | KeyNotFoundException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
+        // } else {
+        // try {
+        // transaction(val.getBlock(), 0);
+        // } catch (NullKeyException | KeyNotFoundException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
+        // }
         return val.getBlock();
       } // Next
     };
